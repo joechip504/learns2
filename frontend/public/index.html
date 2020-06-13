@@ -28,6 +28,29 @@
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/7.15.1/firebase-app.js"></script>
+
+    <!-- TODO: Add SDKs for Firebase products that you want to use
+        https://firebase.google.com/docs/web/setup#available-libraries -->
+    <script src="https://www.gstatic.com/firebasejs/7.15.1/firebase-analytics.js"></script>
+
+    <script>
+      // Your web app's Firebase configuration
+      var firebaseConfig = {
+        apiKey: "AIzaSyDT5NEcgiF-e83SwJtIt5BqWldzlwoklTM",
+        authDomain: "learns2.firebaseapp.com",
+        databaseURL: "https://learns2.firebaseio.com",
+        projectId: "learns2",
+        storageBucket: "learns2.appspot.com",
+        messagingSenderId: "992813064878",
+        appId: "1:992813064878:web:124423e7f43846dd15833f",
+        measurementId: "G-8P130415P8"
+      };
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+      firebase.analytics();
+    </script>
     <div id="root"></div>
     <!--
       This HTML file is a template.
