@@ -1,28 +1,27 @@
 .s2-grid {
   display: grid;
-  grid-template-columns: 200px 1fr;
+  grid-template-columns: 220px 1fr;
   width: 100vw;
   height: 100vh;
 }
 
 .s2-grid-left-menu {
-  background-color: lightgrey;
+  background-color: rgb(45, 45, 78);
 }
 
 .s2-grid-body {
-  background-color: lightcyan;
+  background-color: rgb(45, 64, 78);
 }
 
 .s2-grid-body-item {
-}
-
-.s2-replay-dropzone {
 }
 
 .left-menu {
   height: 100%;
 }
 
-.replay-upload {
+.dropzone-container {
   height: 150px;
+  background-color: lightgrey;
+  border-radius: 5px;
 }

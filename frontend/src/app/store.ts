@@ -1,10 +1,13 @@
-import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
-import counterReducer from '../features/counter/counterSlice';
+import { configureStore, ThunkAction, Action, combineReducers } from '@reduxjs/toolkit';
+import { replayReducer } from '../store/replay/reducers';
+
+
+const rootReducer = combineReducers({
+  replay: replayReducer
+})
 
 export const store = configureStore({
-  reducer: {
-    counter: counterReducer,
-  },
+  reducer: rootReducer 
 });
 
 export type RootState = ReturnType<typeof store.getState>;

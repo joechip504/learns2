@@ -14,7 +14,7 @@ export interface Player {
 
 export const PlayerCard = (p: Player) => {
     return (
-        <Card className='bp3-dark' style={{width: '100%', margin: 'auto', paddingTop: '20px'}}>
+        <Card className='bp3-dark bp3-elevation-3' style={{width: '100%', margin: 'auto', paddingTop: '20px'}}>
             <h3 className='bp3-heading'>{p.displayName}</h3>
             <hr/>
             <div className='bp3-ui-text'>

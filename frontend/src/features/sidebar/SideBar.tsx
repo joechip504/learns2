@@ -1,7 +1,6 @@
 import React from 'react';
 import { Menu, MenuItem, Spinner, MenuDivider } from '@blueprintjs/core';
 import { ReplayUpload } from '../upload/ReplayUpload';
-
 export const SideBar = () => {
     return (
         <Menu large={false} className='left-menu'>
@@ -11,6 +10,7 @@ export const SideBar = () => {
             <MenuItem text='replay-2' />
             <MenuItem text='replay-3' />
             <MenuDivider/>
+            <h4 className='bp3-heading'>Drop .SC2Replay file(s)</h4>
             <ReplayUpload/>
         </Menu>
     )
