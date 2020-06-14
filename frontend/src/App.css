@@ -6,20 +6,23 @@
 }
 
 .s2-grid-left-menu {
-  align-self: stretch;
   background-color: lightgrey;
 }
 
 .s2-grid-body {
-  align-self: stretch;
   background-color: lightcyan;
 }
 
 .s2-grid-body-item {
-  display: flex;
+}
+
+.s2-replay-dropzone {
+}
+
+.left-menu {
+  height: 100%;
 }
 
 .replay-upload {
-  padding-top: 20px;
-  width: '80%';
+  height: 150px;
 }

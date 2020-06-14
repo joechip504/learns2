@@ -1,14 +1,25 @@
 import React from 'react';
 
-import { FileInput, Card, Button, ButtonGroup } from '@blueprintjs/core';
+import Dropzone, { FileRejection, DropEvent } from 'react-dropzone';
+
+const onDrop  = (accepted: File[], rejected: FileRejection[], event: DropEvent) => {
+    console.log(accepted)
+    console.log(rejected)
+    console.log(event)
+}
 
 export const ReplayUpload = () => {
     return (
-        <Card className='replay-upload bp3-dark'>
-            <h2>Select .SC2Replay file</h2>
-            <ButtonGroup minimal={true} large={true} fill={true}>
-                <Button large={true} icon='upload'></Button>
-                <FileInput fill={true} />
-            </ButtonGroup>
-        </Card>)
+        <div className='replay-upload'>
+            <Dropzone onDrop={onDrop}>
+                {({ getRootProps, getInputProps }) => (
+                    <section>
+                        <div className='s2-replay-dropzone' {...getRootProps()}>
+                            <input {...getInputProps()} />
+                            <p>Drop.SC2Replay files here</p>
+                        </div>
+                    </section>
+                )}
+            </Dropzone>
+        </div>)
 }

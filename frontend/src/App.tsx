@@ -2,9 +2,20 @@ import React from 'react';
 import './App.css';
 import 'normalize.css'
 import '@blueprintjs/core/lib/css/blueprint.css';
-import { ReplayUpload } from './features/upload/ReplayUpload';
 import { Header } from './features/header/Header';
 import { SideBar } from './features/sidebar/SideBar';
+
+import { Player, PlayerCard } from './features/replay/PlayerCard';
+
+const samplePlayer0: Player = {
+  displayName: 'Jobama',
+  gameId: 0
+}
+
+const samplePlayer1: Player = {
+  displayName: 'lllllllllll',
+  gameId: 1
+}
 
 const App = () => {
   return (
@@ -15,7 +26,8 @@ const App = () => {
           <SideBar />
         </div>
         <div className='s2-grid-body'>
-          <ReplayUpload />
+          {PlayerCard(samplePlayer0)}
+          {PlayerCard(samplePlayer1)}
         </div>
       </div>
     </div>
