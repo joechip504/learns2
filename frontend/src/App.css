@@ -3,7 +3,6 @@
   grid-template-columns: 200px 1fr;
   width: 100vw;
   height: 100vh;
-  padding: 10px 20px;
 }
 
 .s2-grid-left-menu {
@@ -18,9 +17,6 @@
 
 .s2-grid-body-item {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px 20px;
 }
 
 .replay-upload {
