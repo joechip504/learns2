@@ -1,4 +1,4 @@
-import { Player, ReplayActionTypes, ADD_REPLAY, ADD_PLAYERS, Replay } from "./types"
+import { Player, ReplayActionTypes, ADD_REPLAY, ADD_PLAYERS, Replay, SELECT_REPLAY } from "./types"
 
 export const addReplay = (replay: Replay): ReplayActionTypes => {
     return {
@@ -12,5 +12,12 @@ export const addPlayers = (id: number, players: Player[]): ReplayActionTypes => 
         type: ADD_PLAYERS,
         id: id,
         players: players
+    }
+}
+
+export const selectReplay = (id: number): ReplayActionTypes => {
+    return {
+        type: SELECT_REPLAY,
+        id: id
     }
 }

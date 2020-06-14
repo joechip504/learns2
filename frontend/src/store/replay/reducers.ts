@@ -1,4 +1,4 @@
-import { ReplayState, ReplayActionTypes, ADD_REPLAY, ADD_PLAYERS } from "./types";
+import { ReplayState, ReplayActionTypes, ADD_REPLAY, ADD_PLAYERS, SELECT_REPLAY } from "./types";
 import { Reducer } from "@reduxjs/toolkit";
 
 const initialReplayState: ReplayState = {
@@ -6,7 +6,7 @@ const initialReplayState: ReplayState = {
 }
 
 export const replayReducer: Reducer<ReplayState, ReplayActionTypes> = (state: ReplayState = initialReplayState, action: ReplayActionTypes): ReplayState => {
-    switch(action.type) {
+    switch (action.type) {
         case ADD_REPLAY:
             return {
                 ...state,
@@ -19,7 +19,9 @@ export const replayReducer: Reducer<ReplayState, ReplayActionTypes> = (state: Re
                     curr[i].players = action.players;
                 }
             }
-            return {...state, replays: curr}
+            return { ...state, replays: curr }
+        case SELECT_REPLAY:
+            return { ...state, selected: action.id }
         default:
             return state;
     }

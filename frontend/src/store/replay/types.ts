@@ -16,14 +16,21 @@ export interface Replay {
 
 export interface ReplayState {
     replays: Replay[]
+    selected?: number;
 }
 
 export const ADD_REPLAY = 'ADD_REPLAY'
 export const ADD_PLAYERS = 'ADD_PLAYERS'
+export const SELECT_REPLAY = 'SELECT_REPLAY'
 
 interface AddReplayAction {
     type: typeof ADD_REPLAY;
     replay: Replay;
+}
+
+interface SelectReplayAction {
+    type: typeof SELECT_REPLAY;
+    id: number;
 }
 
 interface AddPlayersAction {
@@ -32,4 +39,4 @@ interface AddPlayersAction {
     players: Player[];
 }
 
-export type ReplayActionTypes = AddReplayAction | AddPlayersAction
+export type ReplayActionTypes = AddReplayAction | AddPlayersAction | SelectReplayAction

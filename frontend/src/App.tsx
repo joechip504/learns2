@@ -3,7 +3,7 @@ import './App.css';
 import 'normalize.css'
 import '@blueprintjs/core/lib/css/blueprint.css';
 import { Header } from './features/header/Header';
-import { SideBar } from './features/sidebar/SideBar';
+import  SideBar from './features/sidebar/SideBar';
 
 import { Player, PlayerCard } from './features/replay/PlayerCard';
 
