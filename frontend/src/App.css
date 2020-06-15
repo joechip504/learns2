@@ -1,6 +1,6 @@
 .s2-grid {
   display: grid;
-  grid-template-columns: 220px 1fr;
+  grid-template-columns: 25vw 75vw;
   width: 100vw;
   height: 100vh;
 }

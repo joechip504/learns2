@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Menu, MenuItem, Spinner, Icon } from '@blueprintjs/core';
+import { Menu, MenuItem, Spinner, Icon, MenuDivider } from '@blueprintjs/core';
 import { ReplayUpload } from '../upload/ReplayUpload';
 import { RootState } from '../../app/store';
 import { Replay, ReplayStatus } from '../../store/replay/types';
@@ -29,12 +29,20 @@ const SideBar = (props: Props) => {
         }
         else if (replay.status === ReplayStatus.Success) {
             labelElement = <Icon icon='tick-circle' />
+            if (props.selected === undefined) {
+                store.dispatch(selectReplay(replay.id));
+            }
         }
         return <MenuItem key={idx} text={replay.name} active={isActive} onClick={onClick} labelElement={labelElement} />
     })
+    let divider = null;
+    if (items.length > 0) {
+        divider = <MenuDivider />
+    }
     return (
         <Menu large={false} className='left-menu'>
             {items}
+            {divider}
             <h4 className='bp3-heading'>Drop .SC2Replay file(s)</h4>
             <ReplayUpload />
         </Menu>
