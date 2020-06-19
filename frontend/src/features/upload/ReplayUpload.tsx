@@ -7,22 +7,38 @@ import Dropzone, { FileRejection, DropEvent } from 'react-dropzone';
 
 var replayId = 0;
 
+const endpoint = process.env.REACT_APP_ANALYSIS_ENDPOINT!;
+
+const handleResponse = (resp: Response, id: number) => {
+    if(resp.type === 'cors' && resp.ok) {
+        store.dispatch(setReplayStatus(id, ReplayStatus.Success));
+        return resp.json();
+    }
+    else {
+        throw Error();
+    }
+}
+
 const onDrop = (accepted: File[], rejected: FileRejection[], event: DropEvent) => {
     accepted.forEach(file => {
         const replay: Replay = { name: file.name, id: replayId++, status: ReplayStatus.Init }
         store.dispatch(addReplay(replay))
-        const reader = new FileReader();
-        reader.onload = () => {
-            const payload = reader.result;
-            store.dispatch(setReplayStatus(replay.id, ReplayStatus.Loading))
-            setTimeout(() => {
-                store.dispatch(setReplayStatus(replay.id, ReplayStatus.Success));
-            }, 2000);
-            console.log(payload);
-            // TODO send off analysis req
+        let req = new FormData()
+        req.append('replay', file)
+        let params: RequestInit =  {
+            method: 'POST',
+            mode: 'cors',
+            redirect: 'follow',
+            body: req
         }
-        reader.readAsArrayBuffer(file);
-    });
+        store.dispatch(setReplayStatus(replay.id, ReplayStatus.Loading))
+        fetch(endpoint, params)
+            .then(resp => handleResponse(resp, replay.id))
+            .catch(err => {
+                store.dispatch(setReplayStatus(replay.id, ReplayStatus.Failure));
+                console.error(err);
+            })
+    })
 }
 
 export const ReplayUpload = () => {
