@@ -1,4 +1,4 @@
-import { ReplayState, ReplayActionTypes, ADD_REPLAY, ADD_PLAYERS, SELECT_REPLAY, SET_REPLAY_STATUS } from "./types";
+import { ReplayState, ReplayActionTypes, ADD_REPLAY, SELECT_REPLAY, SET_REPLAY_STATUS, SET_ANALYSIS, ReplayStatus } from "./types";
 import { Reducer } from "@reduxjs/toolkit";
 
 const initialReplayState: ReplayState = {
@@ -12,15 +12,6 @@ export const replayReducer: Reducer<ReplayState, ReplayActionTypes> = (state: Re
                 ...state,
                 replays: [...state.replays, action.replay]
             }
-        case ADD_PLAYERS:
-            const replays0 = state.replays.map(replay => {
-                let candidate = { ...replay }
-                if (replay.id === action.id) {
-                    candidate.players = action.players;
-                }
-                return candidate;
-            })
-            return { ...state, replays: replays0 };
         case SELECT_REPLAY:
             return { ...state, selected: action.id };
         case SET_REPLAY_STATUS:
@@ -32,6 +23,16 @@ export const replayReducer: Reducer<ReplayState, ReplayActionTypes> = (state: Re
                 return candidate;
             })
             return { ...state, replays: replays1 };
+        case SET_ANALYSIS:
+            const replays2 = state.replays.map(replay => {
+                let candidate = { ...replay }
+                if (replay.id === action.id) {
+                    candidate.status = ReplayStatus.Success;
+                    candidate.analysis = action.analysis;
+                }
+                return candidate;
+            })
+            return { ...state, replays: replays2 }
         default:
             return state;
     }

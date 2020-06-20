@@ -5,18 +5,32 @@ export interface PlayerAnalysis {
 
 export interface Player {
     name: string;
-    analysis: PlayerAnalysis[];
+    race: string;
+    blizz_id: number;
+    user_id: number;
+    //analysis: PlayerAnalysis[];
 }
 
 export enum ReplayStatus {
     Init, Loading, Success, Failure
 }
 
+export interface ReplayMeta {
+    map_title: string;
+    base_build: number;
+    time_utc: number;
+}
+
+export interface AnalysisResponse {
+    meta: ReplayMeta;
+    players: Player[];
+}
+
 export interface Replay {
     name: string;
     id: number;
     status: ReplayStatus;
-    players?: Player[];
+    analysis?: AnalysisResponse;
 }
 
 export interface ReplayState {
@@ -28,6 +42,7 @@ export const ADD_REPLAY = 'ADD_REPLAY'
 export const ADD_PLAYERS = 'ADD_PLAYERS'
 export const SELECT_REPLAY = 'SELECT_REPLAY'
 export const SET_REPLAY_STATUS = 'SET_REPLAY_STATUS'
+export const SET_ANALYSIS = 'SET_ANALYSIS'
 
 interface AddReplayAction {
     type: typeof ADD_REPLAY;
@@ -51,4 +66,10 @@ interface AddPlayersAction {
     players: Player[];
 }
 
-export type ReplayActionTypes = AddReplayAction | AddPlayersAction | SelectReplayAction | SetReplayStatusAction
+interface SetAnalysisAction {
+    type: typeof SET_ANALYSIS;
+    id: number;
+    analysis: AnalysisResponse;
+}
+
+export type ReplayActionTypes = AddReplayAction | AddPlayersAction | SelectReplayAction | SetReplayStatusAction | SetAnalysisAction

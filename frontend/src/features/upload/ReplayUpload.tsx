@@ -1,6 +1,6 @@
 import React from 'react';
-import { addReplay, setReplayStatus } from '../../store/replay/actions';
-import { Replay, ReplayStatus } from '../../store/replay/types';
+import { addReplay, setReplayStatus, setAnalysis } from '../../store/replay/actions';
+import { Replay, ReplayStatus, AnalysisResponse } from '../../store/replay/types';
 import { store } from '../../app/store';
 
 import Dropzone, { FileRejection, DropEvent } from 'react-dropzone';
@@ -11,8 +11,9 @@ const endpoint = process.env.REACT_APP_ANALYSIS_ENDPOINT!;
 
 const handleResponse = (resp: Response, id: number) => {
     if(resp.type === 'cors' && resp.ok) {
-        store.dispatch(setReplayStatus(id, ReplayStatus.Success));
-        return resp.json();
+        return resp.json().then(json => {
+            store.dispatch(setAnalysis(id, json[0] as AnalysisResponse));
+        })
     }
     else {
         throw Error();
