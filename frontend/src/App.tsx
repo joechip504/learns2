@@ -4,7 +4,7 @@ import 'normalize.css'
 import '@blueprintjs/core/lib/css/blueprint.css';
 import { Header } from './features/header/Header';
 import  SideBar from './features/sidebar/SideBar';
-import Meta from './features/replay/Meta';
+import ReplayReport from './features/replay/ReplayReport';
 
 const App = () => {
   return (
@@ -15,7 +15,8 @@ const App = () => {
           <SideBar />
         </div>
         <div className='s2-grid-body'>
-          <Meta />
+          <ReplayReport />
+    
         </div>
       </div>
     </div>

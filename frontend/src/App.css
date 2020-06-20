@@ -25,3 +25,8 @@
   background-color: lightgrey;
   border-radius: 8px;
 }
+
+.game-info-bar {
+  margin-bottom: 5%;
+  text-align: center
+}
