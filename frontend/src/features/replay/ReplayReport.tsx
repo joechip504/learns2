@@ -1,10 +1,9 @@
 import React from 'react';
 import { Replay, AnalysisResponse } from '../../store/replay/types';
-import { Card, Callout, Intent } from '@blueprintjs/core';
+import { Callout, Intent } from '@blueprintjs/core';
 import { RootState } from '../../app/store';
 import { connect } from 'react-redux';
 import { PlayerCards } from './PlayerCard';
-import { INTENT_PRIMARY } from '@blueprintjs/core/lib/esm/common/classes';
 
 const inner = (analysis: AnalysisResponse) => {
     //const teamSize = analysis.players.length / 2;
@@ -13,14 +12,9 @@ const inner = (analysis: AnalysisResponse) => {
     return <div>
         <Callout id="gameinfo" className="game-info-bar" intent={Intent.PRIMARY} icon={null}>
             <h3 id="game-title">{analysis.meta.map_title} at {new Date(analysis.meta.time_utc).toUTCString()}</h3>
-            <div id="game-stats"><span></span>
-            </div>
-<section id="team-1" className="team-section"></section>
-            <section id="team-2" className="team-section"></section> 
         </Callout>
-
-        <p>{JSON.stringify(analysis.players)}</p>
-        <p>{JSON.stringify(analysis.meta)}</p>
+        <div id="game-stats">
+        </div>
     </div>
 }
 
@@ -33,7 +27,7 @@ const ReplayReport = (props: Props) => {
     if (replay === undefined) {
         return null;
     }
-    const title = replay.name;
+    //const title = replay.name;
     let analysis = null;
     if (replay.analysis !== undefined) {
         analysis = inner(replay.analysis)

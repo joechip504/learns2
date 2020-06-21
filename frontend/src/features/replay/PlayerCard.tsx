@@ -1,7 +1,6 @@
 import React from 'react';
-import { Card, Callout } from '@blueprintjs/core';
+import { Card } from '@blueprintjs/core';
 import { Player, Replay } from '../../store/replay/types';
-import { RootState } from '../../app/store';
 
 export const PlayerCard = (p: Player) => {
     return (
@@ -10,6 +9,7 @@ export const PlayerCard = (p: Player) => {
             <hr/>
             <div className='bp3-ui-text'>
                 <div id="primary-guess" className="primary-guess">Best Guess: <strong>Jobama</strong> 99%</div>
+                <div id="runner-up-guess" className="runner-up-guess">Runner Up: TFresh 98%</div>
             </div>
         </Card>
     )
