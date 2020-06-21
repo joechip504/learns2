@@ -1,5 +1,5 @@
-export interface PlayerAnalysis {
-    name: string;
+export interface PlayerGuess {
+    candidate: string;
     confidence: number;
 }
 
@@ -8,7 +8,7 @@ export interface Player {
     race: string;
     blizz_id: number;
     user_id: number;
-    //analysis: PlayerAnalysis[];
+    guesses: PlayerGuess[];
 }
 
 export enum ReplayStatus {
