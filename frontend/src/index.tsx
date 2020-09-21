@@ -6,6 +6,31 @@ import { store } from './app/store';
 import { Provider } from 'react-redux';
 import * as serviceWorker from './serviceWorker';
 
+import firebase from 'firebase';
+import { setUser } from './store/auth/actions';
+
+export const firebaseConfig = {
+  apiKey: "AIzaSyDT5NEcgiF-e83SwJtIt5BqWldzlwoklTM",
+  authDomain: "learns2.firebaseapp.com",
+  databaseURL: "https://learns2.firebaseio.com",
+  projectId: "learns2",
+  storageBucket: "learns2.appspot.com",
+  messagingSenderId: "992813064878",
+  appId: "1:992813064878:web:124423e7f43846dd15833f",
+  measurementId: "G-8P130415P8"
+}
+
+export const app = firebase.initializeApp(firebaseConfig);
+export const auth = app.auth();
+firebase.analytics();
+firebase.performance();
+
+auth.onAuthStateChanged((user) => {
+  if (user !== null) {
+    store.dispatch(setUser(user));
+  }
+})
+
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
