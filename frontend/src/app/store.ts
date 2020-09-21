@@ -1,9 +1,11 @@
 import { configureStore, ThunkAction, Action, combineReducers } from '@reduxjs/toolkit';
 import { replayReducer } from '../store/replay/reducers';
+import { authReducer } from '../store/auth/reducers';
 
 
 const rootReducer = combineReducers({
-  replay: replayReducer
+  replay: replayReducer,
+  auth: authReducer
 })
 
 export const store = configureStore({
