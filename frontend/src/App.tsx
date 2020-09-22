@@ -2,16 +2,12 @@ import React from 'react';
 import './App.css';
 import 'normalize.css'
 import '@blueprintjs/core/lib/css/blueprint.css';
-import Header from './features/header/Header';
 import  SideBar from './features/sidebar/SideBar';
 import Meta from './features/replay/Meta';
-import  SignInButton  from './features/auth/SignInButton';
 
 const App = () => {
   return (
     <div>
-      <Header />
-      <SignInButton/>
       <div className='s2-grid'>
         <div className='s2-grid-left-menu bp3-dark'>
           <SideBar />
