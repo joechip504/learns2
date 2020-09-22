@@ -5,9 +5,13 @@ import App from './App';
 import { store } from './app/store';
 import { Provider } from 'react-redux';
 import * as serviceWorker from './serviceWorker';
+import { history } from './app/store';
 
 import firebase from 'firebase';
 import { setUser } from './store/auth/actions';
+import { ConnectedRouter } from 'connected-react-router';
+import { Route, Switch } from 'react-router-dom';
+import Header from './features/header/Header';
 
 export const firebaseConfig = {
   apiKey: "AIzaSyDT5NEcgiF-e83SwJtIt5BqWldzlwoklTM",
@@ -34,7 +38,17 @@ auth.onAuthStateChanged((user) => {
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <App />
+      <ConnectedRouter history={history}>
+        <Header />
+        <Switch>
+          <Route path="/upload">
+            <h1>TODO</h1>
+          </Route>
+          <Route path="*">
+            <App />
+          </Route>
+        </Switch>
+      </ConnectedRouter>
     </Provider>
   </React.StrictMode>,
   document.getElementById('root')
