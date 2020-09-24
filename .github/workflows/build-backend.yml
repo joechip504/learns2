@@ -36,6 +36,7 @@ jobs:
     - name: Build dist/
       working-directory: backend
       run: |
+        pip install wheel
         python setup.py sdist bdist_wheel
     - name: Publish to PyPi
       uses: pypa/gh-action-pypi-publish@master
