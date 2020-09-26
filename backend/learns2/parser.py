@@ -59,12 +59,15 @@ class SC2ReplayParser(object):
         return player_objects
 
     def small_details(self):
-        d = self.details()
+        details = self.details()
+        description = self.initdata()['m_syncLobbyState']['m_gameDescription']
         return {
-            'm_title': d['m_title'],
-            'm_isBlizzardMap': d['m_isBlizzardMap'],
-            'm_timeUTC': d['m_timeUTC'],
-            'm_timeLocalOffset': d['m_timeLocalOffset']
+            'm_title': details['m_title'],
+            'm_isBlizzardMap': details['m_isBlizzardMap'],
+            'm_timeUTC': details['m_timeUTC'],
+            'm_timeLocalOffset': details['m_timeLocalOffset'],
+            'm_mapSizeX': description['m_mapSizeX'],
+            'm_mapSizeY': description['m_mapSizeY']
         }
 
     def to_dict(self):
