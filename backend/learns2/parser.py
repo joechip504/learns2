@@ -1,13 +1,10 @@
 from s2protocol import versions
 from mpyq import MPQArchive
-import os
-
 from typing import List
 
 
 class SC2ReplayParser(object):
     def __init__(self, replay: str):
-        assert os.path.isfile(replay), f'{replay} is not a file'
         self.archive = MPQArchive(replay)
         self.protocol = self.read_protocol(self.archive)
         self._initdata = None
