@@ -34,6 +34,9 @@ def test_ladder_1v1_81433_players():
     assert p0['m_race'].decode('utf-8') == 'Protoss'
     assert p1['m_race'].decode('utf-8') == 'Protoss'
 
+    # https://starcraft2.com/en-us/profile/1/1/2501022
+    assert p1['m_localizedId'] == '1/1/2501022'
+
 
 def test_ladder_1v1_81433_events():
     parser = SC2ReplayParser(everdream)

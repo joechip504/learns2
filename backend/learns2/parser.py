@@ -63,6 +63,7 @@ class SC2ReplayParser(object):
             if slot_id in slot_id_to_user_id:
                 player['m_userId'] = slot_id_to_user_id[slot_id]
                 player['m_userInitialData'] = self.initdata()['m_syncLobbyState']['m_userInitialData'][slot_id]
+                player['m_localizedId'] = '{}/{}/{}'.format(player['m_toon']['m_region'], player['m_toon']['m_realm'], player['m_toon']['m_id'])
                 player_objects.append(player)
         return player_objects
 
