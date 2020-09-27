@@ -9,6 +9,7 @@ class SC2ReplayParser(object):
         self.protocol = self.read_protocol(self.archive)
         self._initdata = None
         self._details = None
+        self._events = None
 
     @staticmethod
     def read_protocol(archive: MPQArchive):
@@ -27,6 +28,11 @@ class SC2ReplayParser(object):
         detail_file = archive.read_file('replay.details')
         return protocol.decode_replay_details(detail_file)
 
+    @staticmethod
+    def read_game_events(protocol, archive: MPQArchive) -> dict:
+        game_event_file = archive.read_file('replay.game.events')
+        return protocol.decode_replay_game_events(game_event_file)
+
     def initdata(self) -> dict:
         if self._initdata is None:
             self._initdata = self.read_initdata(self.protocol, self.archive)
@@ -37,6 +43,11 @@ class SC2ReplayParser(object):
         if self._details is None:
             self._details = self.read_details(self.protocol, self.archive)
         return self._details
+
+    def events(self):
+        if self._events is None:
+            self._events = list(self.read_game_events(self.protocol, self.archive))
+        return self._events
 
     def players(self) -> List[dict]:
         slots = self.initdata()['m_syncLobbyState']['m_lobbyState']['m_slots']
