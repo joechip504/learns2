@@ -11,8 +11,8 @@ jobs:
         steps:
             - uses: actions/checkout@v2
             - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
-                with:
-                    version: 'latest'
-                    project_id: ${{ secrets.GCP_PROJECT_ID }}
-                    service_account_key: ${{ secrets.GCP_SA_KEY }}
+              with:
+                version: 'latest'
+                project_id: ${{ secrets.GCP_PROJECT_ID }}
+                service_account_key: ${{ secrets.GCP_SA_KEY }}
             - run: gcloud info
