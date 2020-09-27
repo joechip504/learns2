@@ -8,6 +8,10 @@
     ],
     "rewrites": [
       {
+        "source": "/ping",
+        "function": "ping"
+      },
+      {
         "source": "**",
         "destination": "/index.html"
       }
