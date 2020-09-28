@@ -5,6 +5,8 @@ import { AuthState } from '../../store/auth/types';
 import { connect } from 'react-redux';
 import SignInButton from '../auth/SignInButton';
 import SignOutButton from '../auth/SignOutButton';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import firebase from 'firebase';
 
 const onClick = () => { window.open('https://github.com/joechip504/learns2', '_blank') }
 
@@ -19,11 +21,12 @@ const Header = (props: Props) => {
     // firebase-ui does something weird where it automatically removes the button after login
     // it throw errors if this check is bundled with the button component
     // either have to spend some time debugging that or just add a one-line check here ;)
-    const signInBtn = !props.auth.isAuthenticated && <SignInButton />
-    const userHeading = props.auth.isAuthenticated && (
+    const [user] = useAuthState(firebase.auth());
+
+    const userHeading = user && (
         <Navbar.Group>
             <Icon icon='user' iconSize={20} style={{marginRight: '7px'}}/>
-            <NavbarHeading className='bp3-minimal' >{props.auth.email}</NavbarHeading>
+            <NavbarHeading className='bp3-minimal' >{user.email}</NavbarHeading>
         </Navbar.Group>
     )
     return (
@@ -37,7 +40,7 @@ const Header = (props: Props) => {
                 <Button className='bp3-minimal' icon='info-sign' text='About' />
                 <Button className='bp3-minimal' icon='git-repo' text='Source' onClick={onClick} />
                 <NavbarDivider />
-                {signInBtn}
+                <SignInButton/>
                 {userHeading}
                 <SignOutButton/>
             </Navbar.Group>

@@ -1,23 +1,15 @@
 import React from 'react';
-import { RootState } from '../../app/store';
-import { connect } from 'react-redux';
 import { Button } from '@blueprintjs/core';
+import { useAuthState } from 'react-firebase-hooks/auth';
 import firebase from 'firebase';
-
-interface Props {
-    isAuthenticated: boolean;
-}
-
-const mapState = (root: RootState) => {
-    return { isAuthenticated: root.auth.isAuthenticated }
-}
 
 const onClick = () => {
     firebase.auth().signOut().then(() => window.location.reload())
 }
 
-const SignOutButton = ({ isAuthenticated }: Props) => {
-    if (isAuthenticated) {
+const SignOutButton = () => {
+    const [user] = useAuthState(firebase.auth());
+    if (user) {
         return <Button onClick={onClick} text='Sign Out' />
     }
     else {
@@ -25,5 +17,5 @@ const SignOutButton = ({ isAuthenticated }: Props) => {
     }
 }
 
-export default connect(mapState)(SignOutButton)
+export default SignOutButton;
 

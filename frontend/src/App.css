@@ -25,3 +25,12 @@
   background-color: lightgrey;
   border-radius: 8px;
 }
+
+html {
+  background-color: rgb(45, 64, 78);
+}
+
+.my-form {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+}

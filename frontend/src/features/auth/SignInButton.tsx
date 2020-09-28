@@ -1,6 +1,8 @@
 import React from 'react';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 import firebase from 'firebase';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { Spinner } from '@blueprintjs/core';
 
 const uiConfig: firebaseui.auth.Config = {
     // Popup signin flow rather than redirect flow.
@@ -17,7 +19,14 @@ const uiConfig: firebaseui.auth.Config = {
 };
 
 const SignInButton = () => {
-    return <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={firebase.auth()} />;
+    const [user, loading, error] = useAuthState(firebase.auth());
+    if (!user || error) {
+        return <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={firebase.auth()} />;
+    }
+    else if (loading) {
+        return <Spinner size={Spinner.SIZE_SMALL} />
+    }
+    else return null;
 }
 
 export default SignInButton;

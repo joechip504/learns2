@@ -7,11 +7,16 @@ import { Provider } from 'react-redux';
 import * as serviceWorker from './serviceWorker';
 import { history } from './app/store';
 
-import firebase from 'firebase';
-import { setUser } from './store/auth/actions';
 import { ConnectedRouter } from 'connected-react-router';
 import { Route, Switch } from 'react-router-dom';
 import Header from './features/header/Header';
+import AdminView from './features/admin/AdminView';
+
+import firebase from 'firebase';
+import 'firebase/analytics'
+import 'firebase/performance'
+import 'firebase/auth'
+import 'firebase/firestore'
 
 export const firebaseConfig = {
   apiKey: "AIzaSyDT5NEcgiF-e83SwJtIt5BqWldzlwoklTM",
@@ -24,16 +29,12 @@ export const firebaseConfig = {
   measurementId: "G-8P130415P8"
 }
 
-export const app = firebase.initializeApp(firebaseConfig);
-export const auth = app.auth();
+firebase.initializeApp(firebaseConfig);
+export const auth = firebase.auth();
+export const firestore = firebase.firestore();
+
 firebase.analytics();
 firebase.performance();
-
-auth.onAuthStateChanged((user) => {
-  if (user !== null) {
-    store.dispatch(setUser(user));
-  }
-})
 
 ReactDOM.render(
   <React.StrictMode>
@@ -41,9 +42,9 @@ ReactDOM.render(
       <ConnectedRouter history={history}>
         <Header />
         <Switch>
-          <Route path="/upload">
-            <h1>TODO</h1>
-          </Route>
+          <Route path="/admin">
+            <AdminView />
+         </Route>
           <Route path="*">
             <App />
           </Route>

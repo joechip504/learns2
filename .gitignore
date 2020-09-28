@@ -1,0 +1,6 @@
+.idea/
+backend/build
+backend/dist
+__pycache__/
+38venv/
+*egg-info
