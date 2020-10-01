@@ -15,7 +15,7 @@ def test_proto_81433():
 def test_ladder_1v1_81433_details():
     parser = SC2ReplayParser(everdream)
     details = parser.to_dict()['details']
-    assert details['m_title'].decode('utf-8') == 'Ever Dream LE'
+    assert details['m_title'] == 'Ever Dream LE'
     assert details['m_isBlizzardMap']
     assert details['m_mapSizeX'] == 200
     assert details['m_mapSizeY'] == 216
@@ -27,12 +27,12 @@ def test_ladder_1v1_81433_players():
     players = parser.to_dict()['players']
     assert len(players) == 2
     p0, p1 = players[0], players[1]
-    assert p0['m_userInitialData']['m_name'].decode('utf-8') == 'GamIsSecHome'
-    assert p1['m_userInitialData']['m_name'].decode('utf-8') == 'Jobama'
+    assert p0['m_userInitialData']['m_name'] == 'GamIsSecHome'
+    assert p1['m_userInitialData']['m_name'] == 'Jobama'
     assert p0['m_userId'] == 0
     assert p1['m_userId'] == 1
-    assert p0['m_race'].decode('utf-8') == 'Protoss'
-    assert p1['m_race'].decode('utf-8') == 'Protoss'
+    assert p0['m_race'] == 'Protoss'
+    assert p1['m_race'] == 'Protoss'
 
     # https://starcraft2.com/en-us/profile/1/1/2501022
     assert p1['m_localizedId'] == '1/1/2501022'

@@ -63,7 +63,8 @@ class SC2ReplayParser(object):
             if slot_id in slot_id_to_user_id:
                 player['m_userId'] = slot_id_to_user_id[slot_id]
                 player['m_userInitialData'] = self.initdata()['m_syncLobbyState']['m_userInitialData'][slot_id]
-                player['m_localizedId'] = '{}/{}/{}'.format(player['m_toon']['m_region'], player['m_toon']['m_realm'], player['m_toon']['m_id'])
+                player['m_localizedId'] = '{}/{}/{}'.format(player['m_toon']['m_region'], player['m_toon']['m_realm'],
+                                                            player['m_toon']['m_id'])
                 player_objects.append(player)
         return player_objects
 
@@ -80,7 +81,26 @@ class SC2ReplayParser(object):
         }
 
     def to_dict(self):
-        return {
+        payload = {
             'details': self.small_details(),
             'players': self.players()
         }
+        return decode_utf8(payload)
+
+
+# Slightly modified from:
+# https://stackoverflow.com/questions/57014259/json-dumps-on-dictionary-with-bytes-for-keys
+def decode_utf8(d: dict) -> dict:
+    result = {}
+    for key, value in d.items():
+        if isinstance(key, bytes):
+            key = key.decode()
+        if isinstance(value, bytes):
+            value = value.decode()
+        elif isinstance(value, dict):
+            value = decode_utf8(value)
+        elif isinstance(value, list):
+            decoded = [decode_utf8(v) for v in value]
+            value = decoded
+        result.update({key: value})
+    return result
