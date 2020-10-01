@@ -12,6 +12,10 @@
         "function": "ping"
       },
       {
+        "source": "/replay_info",
+        "function": "replay_info"
+      },
+      {
         "source": "**",
         "destination": "/index.html"
       }

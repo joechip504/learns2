@@ -17,3 +17,4 @@ jobs:
                 service_account_key: ${{ secrets.GCP_SA_KEY }}
             - run: gcloud info
             - run: gcloud functions deploy ping --runtime python38 --trigger-http --allow-unauthenticated
+            - run: gcloud functions deploy replay_info --runtime python38 --trigger-http --allow-unauthenticated

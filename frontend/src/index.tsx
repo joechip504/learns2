@@ -30,11 +30,6 @@ export const firebaseConfig = {
 }
 
 firebase.initializeApp(firebaseConfig);
-export const auth = firebase.auth();
-export const firestore = firebase.firestore();
-
-firebase.analytics();
-firebase.performance();
 
 ReactDOM.render(
   <React.StrictMode>
@@ -45,7 +40,7 @@ ReactDOM.render(
           <Route path="/admin">
             <AdminView />
          </Route>
-          <Route path="*">
+          <Route path="/">
             <App />
           </Route>
         </Switch>
