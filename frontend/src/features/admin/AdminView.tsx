@@ -2,12 +2,11 @@ import React from 'react';
 import { RootState } from '../../app/store';
 import { connect } from 'react-redux';
 import AddPlayer from './AddPlayer';
+import { PlayerSelect } from './PlayerSelect';
+import { Divider } from '@blueprintjs/core';
+import AddTournamentReplay from './AddTournamentReplay';
+//import { useAuthState } from 'react-firebase-hooks/auth';
 
-interface Player {
-    name: string,
-    url: string,
-    aliases: string[]
-}
 
 interface Props {
 };
@@ -21,7 +20,10 @@ const mapState = (state: RootState): Props => {
 const AdminView = (props: Props) => {
     return (
         <div>
+            <PlayerSelect />
             <AddPlayer />
+            <Divider/>
+            <AddTournamentReplay/>
         </div>
     );
 }

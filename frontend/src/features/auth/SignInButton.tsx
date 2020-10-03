@@ -11,10 +11,17 @@ const uiConfig: firebaseui.auth.Config = {
     signInSuccessUrl: '/',
     // We will display Google and Facebook as auth providers.
     signInOptions: [
-        firebase.auth.GoogleAuthProvider.PROVIDER_ID
+        {
+            provider: firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+            clientId: '992813064878-56jfssija58lfu1hc49fvdeejqrkphnh.apps.googleusercontent.com'
+        }
     ],
     callbacks: {
-        signInSuccessWithAuthResult: () => true
+        signInSuccessWithAuthResult: (res) => {
+            // https://github.com/firebase/firebaseui-web#credential-helper
+            console.log('res: ' , res.credential) //idToken
+            return true
+        }
     }
 };
 
