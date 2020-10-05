@@ -12,7 +12,7 @@ import { Route, Switch } from 'react-router-dom';
 import Header from './features/header/Header';
 import AdminView from './features/admin/AdminView';
 
-import firebase from 'firebase';
+import * as firebase from 'firebase/app';
 import 'firebase/analytics'
 import 'firebase/performance'
 import 'firebase/auth'

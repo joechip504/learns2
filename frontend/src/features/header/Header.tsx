@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import SignInButton from '../auth/SignInButton';
 import SignOutButton from '../auth/SignOutButton';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import firebase from 'firebase';
+import * as firebase from 'firebase/app';
 
 const onClick = () => { window.open('https://github.com/joechip504/learns2', '_blank') }
 

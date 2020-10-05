@@ -1,6 +1,7 @@
 import React from 'react';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
-import firebase from 'firebase';
+import * as firebase from 'firebase/app';
+import 'firebase/auth';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { Spinner } from '@blueprintjs/core';
 

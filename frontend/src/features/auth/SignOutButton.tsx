@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from '@blueprintjs/core';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import firebase from 'firebase';
+import * as firebase from 'firebase/app';
 
 const onClick = () => {
     firebase.auth().signOut().then(() => window.location.reload())

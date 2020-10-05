@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Spinner } from '@blueprintjs/core';
 import Dropzone from 'react-dropzone';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import firebase from 'firebase'
+import * as firebase from 'firebase/app';
 
 interface Props { };
 

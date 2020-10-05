@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { RootState } from '../../app/store';
 import { connect } from 'react-redux';
 import { Button, Divider, FormGroup, InputGroup, Intent, Spinner } from '@blueprintjs/core';
-import firebase from 'firebase';
+import * as firebase from 'firebase/app';
 
 interface Props { };
 
