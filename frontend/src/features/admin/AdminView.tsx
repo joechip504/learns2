@@ -5,6 +5,7 @@ import AddPlayer from './AddPlayer';
 import { PlayerSelect } from './PlayerSelect';
 import { Divider } from '@blueprintjs/core';
 import AddTournamentReplay from './AddTournamentReplay';
+import { TournamentReplayDropbox } from './TournamentReplayDropbox';
 //import { useAuthState } from 'react-firebase-hooks/auth';
 
 
@@ -18,12 +19,13 @@ const mapState = (state: RootState): Props => {
 
 
 const AdminView = (props: Props) => {
+            //<AddTournamentReplay/>
     return (
         <div>
             <PlayerSelect />
             <AddPlayer />
             <Divider/>
-            <AddTournamentReplay/>
+            <TournamentReplayDropbox/>
         </div>
     );
 }
