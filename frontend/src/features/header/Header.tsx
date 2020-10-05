@@ -25,7 +25,7 @@ const Header = (props: Props) => {
 
     const userHeading = user && (
         <Navbar.Group>
-            <Icon icon='user' iconSize={20} style={{marginRight: '7px'}}/>
+            <Icon icon='user' iconSize={20} style={{ marginRight: '7px' }} />
             <NavbarHeading className='bp3-minimal' >{user.email}</NavbarHeading>
         </Navbar.Group>
     )
@@ -39,10 +39,11 @@ const Header = (props: Props) => {
             <Navbar.Group align={Alignment.RIGHT}>
                 <Button className='bp3-minimal' icon='info-sign' text='About' />
                 <Button className='bp3-minimal' icon='git-repo' text='Source' onClick={onClick} />
+                <Button className='bp3-minimal' icon='cloud-upload' text='Manage' onClick={() => window.open("/admin")} />
                 <NavbarDivider />
-                <SignInButton/>
+                <SignInButton />
                 {userHeading}
-                <SignOutButton/>
+                <SignOutButton />
             </Navbar.Group>
         </Navbar>
     )

@@ -15,7 +15,7 @@ const AddPlayer = (props: Props) => {
     const [name, setName] = useState('')
     const [url, setUrl] = useState('')
     const [message, setMessage] = React.useState('');
-    const disabled = name === '' && url === '';
+    const disabled = name === '' || url === '';
 
     const getPlayer = (name: string, url: string) => playersRef
         .where("url", "==", url)
