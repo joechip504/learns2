@@ -34,3 +34,12 @@ html {
   display: grid;
   grid-template-columns: 200px 1fr;
 }
+
+.grid-container {
+  display: grid
+}
+
+.player-search {
+  display: inline-block;
+  width: 300px;
+}

@@ -19,7 +19,6 @@ const uiConfig: firebaseui.auth.Config = {
     callbacks: {
         signInSuccessWithAuthResult: (res) => {
             // https://github.com/firebase/firebaseui-web#credential-helper
-            console.log('res: ' , res.credential) //idToken
             return true
         }
     }

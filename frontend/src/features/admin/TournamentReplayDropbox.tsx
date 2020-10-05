@@ -1,70 +1,59 @@
 import React from 'react';
 import * as firebase from 'firebase/app';
 import 'firebase/storage';
-import { Intent, ProgressBar, Spinner } from '@blueprintjs/core';
+import { Intent, ProgressBar } from '@blueprintjs/core';
 import Dropzone from 'react-dropzone';
-import { useAuthState } from 'react-firebase-hooks/auth';
-
 
 export const TournamentReplayDropbox = () => {
-    const [user] = useAuthState(firebase.auth())
-    const [loading, setLoading] = React.useState(false);
-    const [progressBars, setProgressBars] = React.useState<JSX.Element[]>([]);
-    // TODO upload task for each, push in
-    let idx = 0;
+    const [progress, setProgress] = React.useState(0);
+    const [intent, setIntent] = React.useState<Intent>(Intent.PRIMARY);
+    const [animate, setAnimate] = React.useState(false);
+    const [fileName, setFileName] = React.useState('');
+    const ref = firebase.storage().ref('dropbox');
     const onDrop = (accepted: File[]) => {
-        const ref = firebase.storage().ref('dropbox');
-        accepted.forEach(file => {
-            setProgressBars(prev => [...prev, <ProgressBar value={0} />])
+        if (accepted.length !== 1) {
+            alert('Please drop exactly one file (.zip or .SC2Replay)');
+        }
+        else {
+            const file = accepted[0];
+            setFileName(file.name);
             const task = ref.child(file.name).put(file);
             task.on("state_changed",
                 snap => {
-                    setProgressBars(prev => {
-                    let next = [...prev]
-                    next[idx] = <ProgressBar value={snap.bytesTransferred / snap.totalBytes} intent={Intent.PRIMARY} />
-                    return next;
-                    });
+                    setIntent(Intent.PRIMARY);
+                    setProgress(snap.bytesTransferred / snap.totalBytes);
+                    setAnimate(true);
                 },
                 err => {
-                    setProgressBars(prev => {
-                    let next = [...prev]
-                    next[idx] = <ProgressBar value={1} intent={Intent.DANGER} animate={false} />
-                    return next;
-                    });
+                    setProgress(1);
+                    setAnimate(false);
+                    setIntent(Intent.DANGER);
+                    setFileName(err.message);
                 },
                 // On success
                 () => {
-                    setProgressBars(prev => {
-                    let next = [...prev]
-                    next[idx] = <ProgressBar value={1} intent={Intent.SUCCESS} animate={false} />
-                    return next;
-                    })
-                })
-                console.log("idx=", idx)
-            idx++;
-        });
+                    setAnimate(false);
+                    setIntent(Intent.SUCCESS);
+                    setFileName(`Wrote to gs://${task.snapshot.metadata.bucket}/${task.snapshot.metadata.fullPath}`)
+                });
+        }
     };
-
-    const zone = <Dropzone onDrop={onDrop}>
-        {({ getRootProps, getInputProps }) => (
-            <section>
-                <div className='dropzone-container' {...getRootProps()}>
-                    <input {...getInputProps()} />
-                </div>
-            </section>
-        )}
-    </Dropzone>
-
-    const foo = progressBars.map((elem, idx) => <div key={idx}>{elem}</div>)
-    console.log(foo)
     return (
-        <div>
-            <div className="bp3-form-group my-form" >
-                <h2 className="bp3-heading bp3-dark">Upload a tournament Replay</h2>
-                {zone}
+        <div className='grid-container'>
+            <h3 className="bp3-dark bp3-heading">Drop exactly one .SC2Replay or .zip file</h3>
+            <Dropzone onDrop={onDrop}>
+                {({ getRootProps, getInputProps }) => (
+                    <section>
+                        <div className='dropzone-container' {...getRootProps()}>
+                            <input {...getInputProps()} />
+                        </div>
+                    </section>
+                )}
+            </Dropzone>
+            <div style={{ marginTop: '20px' }}>
+                <h4 className="bp3-dark">{fileName}</h4>
+                <ProgressBar intent={intent} value={progress} animate={animate} />
             </div>
-            {foo}
         </div>
-    )
-
-};
+    );
+}

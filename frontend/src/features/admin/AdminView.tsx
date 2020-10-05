@@ -1,33 +1,22 @@
 import React from 'react';
-import { RootState } from '../../app/store';
-import { connect } from 'react-redux';
 import AddPlayer from './AddPlayer';
-import { PlayerSelect } from './PlayerSelect';
-import { Divider } from '@blueprintjs/core';
-import AddTournamentReplay from './AddTournamentReplay';
 import { TournamentReplayDropbox } from './TournamentReplayDropbox';
-//import { useAuthState } from 'react-firebase-hooks/auth';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import * as firebase from 'firebase/app';
 
-
-interface Props {
-};
-
-const mapState = (state: RootState): Props => {
-    return {
-    };
+const AdminView = () => {
+    const [user] = useAuthState(firebase.auth());
+    if (!user) {
+        return <h1 className="bp3-dark">Please log in.</h1>
+    }
+    else {
+        return (
+            <div>
+                <div style={{ marginTop: '10px' }}> <AddPlayer /> </div>
+                <TournamentReplayDropbox />
+            </div>
+        );
+    }
 }
 
-
-const AdminView = (props: Props) => {
-            //<AddTournamentReplay/>
-    return (
-        <div>
-            <PlayerSelect />
-            <AddPlayer />
-            <Divider/>
-            <TournamentReplayDropbox/>
-        </div>
-    );
-}
-
-export default connect(mapState)(AdminView);
+export default AdminView;

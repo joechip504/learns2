@@ -1,35 +1,51 @@
 import React, { useState } from 'react';
 import { RootState } from '../../app/store';
 import { connect } from 'react-redux';
-import { Button, Divider, FormGroup, InputGroup, Intent } from '@blueprintjs/core';
-import { useAuthState } from 'react-firebase-hooks/auth';
+import { Button, Divider, FormGroup, InputGroup, Intent, Spinner } from '@blueprintjs/core';
 import firebase from 'firebase';
 
-interface Props {};
+interface Props { };
 
 const mapState = (root: RootState): Props => { return {}; }
 
 const AddPlayer = (props: Props) => {
+
     const playersRef = firebase.firestore().collection('players')
+    const [loading, setLoading] = React.useState(false);
     const [name, setName] = useState('')
     const [url, setUrl] = useState('')
-    const [user] = useAuthState(firebase.auth());
-    let disabled = true
+    const [message, setMessage] = React.useState('');
+    const disabled = name === '' && url === '';
+
+    const getPlayer = (name: string, url: string) => playersRef
+        .where("url", "==", url)
+        .where("name", "==", name)
+        .limit(1)
+        .get();
+
     const onSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        await playersRef.add({
-            'name': name,
-            'url': url
-        })
-            .then((doc) => console.log(doc))
-            .catch(err => console.error(err))
+        setLoading(true);
+        let snap = await getPlayer(name, url)
+        if (snap.size !== 0) {
+            setLoading(false);
+            setMessage(`document already exists with name=${name}, url=${url}`);
+        }
+        else {
+            playersRef.add({ 'name': name, 'url': url })
+                .then((doc) => setMessage(`Added new player ${name} with url ${url}`))
+                .catch(err => setMessage(err))
+                .finally(() => {
+                    setLoading(false)
+                    setName('')
+                    setUrl('')
+                });
+        }
     }
+
     let intent = Intent.PRIMARY
-    let text = "Please log in"
-    if (user) {
-        disabled = false
-        text = "Submit"
-    }
+    let spinner = loading && <Spinner size={Spinner.SIZE_SMALL} />
+
     return (
         <div className="bp3-form-group my-form" >
             <h2 className="bp3-heading bp3-dark">Add a new Player</h2>
@@ -40,7 +56,11 @@ const AddPlayer = (props: Props) => {
             <FormGroup label="Player Liquipedia URL" labelFor="url-input" className="bp3-dark">
                 <InputGroup className="bp3-dark" id="url-input" placeholder="https://liquipedia.net/starcraft2/INnoVation" onChange={(e: any) => setUrl(e.target.value)} />
             </FormGroup>
-            <Button onClick={onSubmit} intent={intent} disabled={disabled} text={text} />
+            <div>
+                <Button onClick={onSubmit} intent={intent} disabled={disabled} text={"Submit"} />
+                {spinner}
+                <h4 className="bp3-dark">{message}</h4>
+            </div>
         </div>
     );
 }
