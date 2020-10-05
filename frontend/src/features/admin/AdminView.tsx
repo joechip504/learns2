@@ -1,29 +1,22 @@
 import React from 'react';
-import { RootState } from '../../app/store';
-import { connect } from 'react-redux';
 import AddPlayer from './AddPlayer';
+import { TournamentReplayDropbox } from './TournamentReplayDropbox';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import * as firebase from 'firebase/app';
 
-interface Player {
-    name: string,
-    url: string,
-    aliases: string[]
+const AdminView = () => {
+    const [user] = useAuthState(firebase.auth());
+    if (!user) {
+        return <h1 className="bp3-dark">Please log in.</h1>
+    }
+    else {
+        return (
+            <div>
+                <div style={{ marginTop: '10px' }}> <AddPlayer /> </div>
+                <TournamentReplayDropbox />
+            </div>
+        );
+    }
 }
 
-interface Props {
-};
-
-const mapState = (state: RootState): Props => {
-    return {
-    };
-}
-
-
-const AdminView = (props: Props) => {
-    return (
-        <div>
-            <AddPlayer />
-        </div>
-    );
-}
-
-export default connect(mapState)(AdminView);
+export default AdminView;

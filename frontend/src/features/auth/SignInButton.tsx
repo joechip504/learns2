@@ -1,6 +1,7 @@
 import React from 'react';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
-import firebase from 'firebase';
+import * as firebase from 'firebase/app';
+import 'firebase/auth';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { Spinner } from '@blueprintjs/core';
 
@@ -11,10 +12,16 @@ const uiConfig: firebaseui.auth.Config = {
     signInSuccessUrl: '/',
     // We will display Google and Facebook as auth providers.
     signInOptions: [
-        firebase.auth.GoogleAuthProvider.PROVIDER_ID
+        {
+            provider: firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+            clientId: '992813064878-56jfssija58lfu1hc49fvdeejqrkphnh.apps.googleusercontent.com'
+        }
     ],
     callbacks: {
-        signInSuccessWithAuthResult: () => true
+        signInSuccessWithAuthResult: (res) => {
+            // https://github.com/firebase/firebaseui-web#credential-helper
+            return true
+        }
     }
 };
 
