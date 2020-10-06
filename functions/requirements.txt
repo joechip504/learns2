@@ -1,1 +1,3 @@
 learns2
+google-cloud-storage
+google-cloud-firestore
