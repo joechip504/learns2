@@ -4,6 +4,7 @@ import 'firebase/storage';
 import 'firebase/app';
 import { Intent, ProgressBar } from '@blueprintjs/core';
 import Dropzone from 'react-dropzone';
+import { v4 as uuidv4 } from 'uuid';
 
 //https://firebase.google.com/docs/storage/web/start#use_multiple_storage_buckets
 export const TournamentReplayDropbox = () => {
@@ -18,8 +19,9 @@ export const TournamentReplayDropbox = () => {
         }
         else {
             const file = accepted[0];
-            setFileName(file.name);
-            const task = ref.child(file.name).put(file);
+            const filename = uuidv4() + '_' + file.name;
+            setFileName(filename);
+            const task = ref.child(filename).put(file);
             task.on("state_changed",
                 snap => {
                     setIntent(Intent.PRIMARY);
