@@ -1,15 +1,17 @@
 import React from 'react';
 import * as firebase from 'firebase/app';
 import 'firebase/storage';
+import 'firebase/app';
 import { Intent, ProgressBar } from '@blueprintjs/core';
 import Dropzone from 'react-dropzone';
 
+//https://firebase.google.com/docs/storage/web/start#use_multiple_storage_buckets
 export const TournamentReplayDropbox = () => {
     const [progress, setProgress] = React.useState(0);
     const [intent, setIntent] = React.useState<Intent>(Intent.PRIMARY);
     const [animate, setAnimate] = React.useState(false);
     const [fileName, setFileName] = React.useState('');
-    const ref = firebase.storage().ref('dropbox');
+    const ref = firebase.app().storage('gs://tournament-dropbox.learns2.joepringle.dev').ref()
     const onDrop = (accepted: File[]) => {
         if (accepted.length !== 1) {
             alert('Please drop exactly one file (.zip or .SC2Replay)');
