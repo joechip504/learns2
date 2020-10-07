@@ -93,14 +93,17 @@ class SC2ReplayParser(object):
 def decode_utf8(d: dict) -> dict:
     result = {}
     for key, value in d.items():
-        if isinstance(key, bytes):
-            key = key.decode()
-        if isinstance(value, bytes):
-            value = value.decode()
-        elif isinstance(value, dict):
-            value = decode_utf8(value)
-        elif isinstance(value, list):
-            decoded = [decode_utf8(v) for v in value]
-            value = decoded
+        try:
+            if isinstance(key, bytes):
+                key = key.decode()
+            if isinstance(value, bytes):
+                value = value.decode()
+            elif isinstance(value, dict):
+                value = decode_utf8(value)
+            elif isinstance(value, list):
+                decoded = [decode_utf8(v) for v in value]
+                value = decoded
+        except:
+            value = ''
         result.update({key: value})
     return result
