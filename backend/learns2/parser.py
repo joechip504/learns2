@@ -1,6 +1,7 @@
 from s2protocol import versions
 from mpyq import MPQArchive
 from typing import List
+import os
 
 
 class SC2ReplayParser(object):
@@ -16,7 +17,19 @@ class SC2ReplayParser(object):
         content = archive.header['user_data_header']['content']
         header = versions.latest().decode_replay_header(content)
         base_build = header['m_version']['m_baseBuild']
-        return versions.build(base_build)
+        try:
+            return versions.build(base_build)
+        # https://github.com/Blizzard/s2protocol/issues/99
+        # If the protocol is not defined, the previous protocol often works anyway
+        except ImportError as e:
+            base_path = os.path.dirname(versions.__file__)
+            protocols = set([p for p in os.listdir(base_path)])
+            while base_build > 0:
+                base_build -= 1
+                candidate = f'protocol{base_build}.py'
+                if candidate in protocols:
+                    return versions.build(base_build)
+            raise e
 
     @staticmethod
     def read_initdata(protocol, archive: MPQArchive) -> dict:

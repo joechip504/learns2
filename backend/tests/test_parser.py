@@ -6,6 +6,8 @@ from collections import defaultdict
 resources = Path(__file__).absolute().parent.joinpath('resources')
 everdream = resources.joinpath('EverDream.SC2Replay')
 spainvukraine = resources.joinpath('SpainVsUkraine.SC2Replay')
+finlandvsk = resources.joinpath('FinlandVsSouthKorea.SC2Replay')
+protcol76811 = resources.joinpath('Protocol76811.SC2Replay')
 
 
 def test_proto_81433():
@@ -51,7 +53,17 @@ def test_ladder_1v1_81433_events():
     assert hotkeys[4] == 37
     assert hotkeys[5] == 159
 
-def test_1v1_decode_err():
+def test_spain_vs_ukraine():
     parser = SC2ReplayParser(spainvukraine)
+    players = parser.to_dict()['players']
+    assert len(players) == 2
+
+def test_finland_vs_south_korea():
+    parser = SC2ReplayParser(finlandvsk)
+    players = parser.to_dict()['players']
+    assert len(players) == 2
+
+def test_protocol_76811():
+    parser = SC2ReplayParser(protcol76811)
     players = parser.to_dict()['players']
     assert len(players) == 2
