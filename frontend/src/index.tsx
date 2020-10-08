@@ -17,6 +17,7 @@ import 'firebase/analytics'
 import 'firebase/performance'
 import 'firebase/auth'
 import 'firebase/firestore'
+import ReplayLabeler from './features/admin/ReplayLabeler';
 
 export const firebaseConfig = {
   apiKey: "AIzaSyDT5NEcgiF-e83SwJtIt5BqWldzlwoklTM",
@@ -39,7 +40,10 @@ ReactDOM.render(
         <Switch>
           <Route path="/admin">
             <AdminView />
-         </Route>
+          </Route>
+          <Route path="/edit/:collection/:replayId">
+            <ReplayLabeler />
+          </Route>
           <Route path="/">
             <App />
           </Route>
