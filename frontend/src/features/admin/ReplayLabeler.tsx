@@ -4,6 +4,7 @@ import * as firebase from 'firebase/app';
 import 'firebase/firestore';
 import { Replay, ReplayDetails, ReplayPlayer } from '../../interfaces/Replay';
 import { Button, Card, MenuDivider, Spinner } from '@blueprintjs/core';
+import SuggestPlayer from './SuggestPlayer';
 
 const Overview = (details: ReplayDetails) => {
     // Hell if I know
@@ -17,16 +18,17 @@ const Overview = (details: ReplayDetails) => {
 };
 
 const PlayerCard = (player: ReplayPlayer, idx: number) => {
-    console.log(player)
     const mmr = player.m_userInitialData.m_scaledRating ? player.m_userInitialData.m_scaledRating : 'unknown'
     return (
         <Card className="bp3-dark" key={idx}>
             <h2>{player.m_userInitialData.m_name} ({player.m_race}, MMR {mmr})</h2>
             <MenuDivider />
+            <SuggestPlayer/>
             <Button>Some button</Button>
         </Card>
     )
 }
+
 
 const ReplaySummary = (collection: string, replayId: string) => {
     const [loading, setLoading] = React.useState(true);
@@ -38,7 +40,6 @@ const ReplaySummary = (collection: string, replayId: string) => {
             .then(doc => {
                 const data = doc.data() as Replay;
                 setReplay(data)
-                console.log(data)
             })
             .catch(err => console.error(err))
             .finally(() => setLoading(false))
