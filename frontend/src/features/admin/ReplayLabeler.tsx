@@ -9,7 +9,7 @@ import SuggestPlayer from './SuggestPlayer';
 const Overview = (details: ReplayDetails) => {
     // Hell if I know
     // https://github.com/Blizzard/s2protocol/blob/master/docs/flags/details.md#details-flag
-    const ts = details.m_timeUTC / (10 * 1000 * 1000) - 11644473600 - (details.m_timeLocalOffset / 10000000)
+    const ts = details.m_timeUTC / (10 * 1000 * 1000) - 11644473600 //+ (details.m_timeLocalOffset / 10000000)
     const date = new Date(ts * 1000).toString()
     return <div className="bp3-dark">
         <h1>{details.m_title}</h1>
