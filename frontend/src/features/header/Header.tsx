@@ -7,6 +7,7 @@ import SignInButton from '../auth/SignInButton';
 import SignOutButton from '../auth/SignOutButton';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import * as firebase from 'firebase/app';
+import { Link } from 'react-router-dom';
 
 const onClick = () => { window.open('https://github.com/joechip504/learns2', '_blank') }
 
@@ -39,7 +40,7 @@ const Header = (props: Props) => {
             <Navbar.Group align={Alignment.RIGHT}>
                 <Button className='bp3-minimal' icon='info-sign' text='About' />
                 <Button className='bp3-minimal' icon='git-repo' text='Source' onClick={onClick} />
-                <Button className='bp3-minimal' icon='cloud-upload' text='Manage' onClick={() => window.open("/admin")} />
+                <Link to='/admin'><Button className='bp3-minimal' icon='cloud-upload' text='Manage'/></Link>
                 <NavbarDivider />
                 <SignInButton />
                 {userHeading}

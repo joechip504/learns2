@@ -5,10 +5,8 @@ import App from './App';
 import { store } from './app/store';
 import { Provider } from 'react-redux';
 import * as serviceWorker from './serviceWorker';
-import { history } from './app/store';
 
-import { ConnectedRouter } from 'connected-react-router';
-import { Route, Switch } from 'react-router-dom';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import Header from './features/header/Header';
 import AdminView from './features/admin/AdminView';
 
@@ -35,7 +33,7 @@ firebase.initializeApp(firebaseConfig);
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <ConnectedRouter history={history}>
+      <BrowserRouter>
         <Header />
         <Switch>
           <Route path="/admin">
@@ -48,7 +46,7 @@ ReactDOM.render(
             <App />
           </Route>
         </Switch>
-      </ConnectedRouter>
+      </BrowserRouter>
     </Provider>
   </React.StrictMode>,
   document.getElementById('root')

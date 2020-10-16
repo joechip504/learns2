@@ -3,7 +3,7 @@ import { useRouteMatch } from 'react-router-dom';
 import * as firebase from 'firebase/app';
 import 'firebase/firestore';
 import { Replay, ReplayDetails, ReplayPlayer } from '../../interfaces/Replay';
-import { Button, Card, MenuDivider, Spinner } from '@blueprintjs/core';
+import { ButtonGroup, Card, MenuDivider, Spinner } from '@blueprintjs/core';
 import SuggestPlayer from './SuggestPlayer';
 
 const Overview = (details: ReplayDetails) => {
@@ -23,8 +23,9 @@ const PlayerCard = (player: ReplayPlayer, idx: number) => {
         <Card className="bp3-dark" key={idx}>
             <h2>{player.m_userInitialData.m_name} ({player.m_race}, MMR {mmr})</h2>
             <MenuDivider />
+            <ButtonGroup>
             <SuggestPlayer/>
-            <Button>Some button</Button>
+            </ButtonGroup>
         </Card>
     )
 }

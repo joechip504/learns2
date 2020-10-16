@@ -1,2 +1,3 @@
 .pytest_cache/
 38venv/
+trashcan/

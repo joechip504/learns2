@@ -3,6 +3,7 @@ import AddPlayer from './AddPlayer';
 import { TournamentReplayDropbox } from './TournamentReplayDropbox';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import * as firebase from 'firebase/app';
+import UnlabeledReplays from './UnlabeledReplays';
 
 const AdminView = () => {
     const [user] = useAuthState(firebase.auth());
@@ -13,7 +14,8 @@ const AdminView = () => {
         return (
             <div>
                 <div style={{ marginTop: '10px' }}> <AddPlayer /> </div>
-                <TournamentReplayDropbox />
+                <div><TournamentReplayDropbox /> </div>
+                <div><UnlabeledReplays/></div>
             </div>
         );
     }
