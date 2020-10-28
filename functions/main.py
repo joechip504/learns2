@@ -31,9 +31,7 @@ def parse_tournament_replay(event, context):
         blob.download_to_filename(localfile)
         parser = SC2ReplayParser(localfile)
         payload = parser.to_dict()
-        payload['storage_event'] = event
-        payload['labels'] = {}
-        payload['is_labeled'] = False
+        payload['storageEvent'] = event
         db = firestore.Client()
         ref = db.collection("tournamentReplays")
         res = ref.where("storage_event.md5Hash", "==", event["md5Hash"]).limit(1).get()
