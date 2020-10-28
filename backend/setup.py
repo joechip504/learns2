@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="learns2", # Replace with your own username
-    version="0.0.7",
+    version="0.0.9",
     author="Joe Pringle",
     author_email="joe@joepringle.dev",
     description="For use with https://learns2.joepringle.dev",
