@@ -43,3 +43,9 @@ html {
   display: inline-block;
   width: 300px;
 }
+
+.labeler-footer {
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+}

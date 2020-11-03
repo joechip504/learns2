@@ -9,7 +9,10 @@ import { Link } from 'react-router-dom';
 
 function UnlabeledReplays () {
     const ref = firebase.firestore().collection('tournamentReplays')
-    const query = ref.where('is_labeled', '==', false).limit(3).withConverter(replayConverter)
+    const query = ref
+        .where('isLabeled', '==', false)
+        .limit(3)
+        .withConverter(replayConverter)
     const [replays] = useCollectionDataOnce<Replay>(query)
     let items: JSX.Element[] = [];
     if (replays) {

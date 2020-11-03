@@ -1,10 +1,15 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useRouteMatch } from 'react-router-dom';
 import * as firebase from 'firebase/app';
 import 'firebase/firestore';
 import { Replay, ReplayDetails, ReplayPlayer } from '../../interfaces/Replay';
-import { ButtonGroup, Card, MenuDivider, Spinner } from '@blueprintjs/core';
+import { Button, Card, MenuDivider, Spinner } from '@blueprintjs/core';
 import SuggestPlayer from './SuggestPlayer';
+import Player from '../../interfaces/Player';
+import './NextUnlabeledReplayButton';
+import NextUnlabeledReplayButton from './NextUnlabeledReplayButton';
+import { useCollectionDataOnce } from 'react-firebase-hooks/firestore';
+import playerConverter from '../io/PlayerConverter';
 
 const Overview = (details: ReplayDetails) => {
     // Hell if I know
@@ -17,48 +22,50 @@ const Overview = (details: ReplayDetails) => {
     </div>
 };
 
-const PlayerCard = (player: ReplayPlayer, idx: number) => {
+const PlayerCard = (player: ReplayPlayer, players: Player[], idx: number, labels: Map<string, number>, setLabels: React.Dispatch<React.SetStateAction<Map<string, number>>>) => {
     const mmr = player.m_userInitialData.m_scaledRating ? player.m_userInitialData.m_scaledRating : 'unknown'
+    const onSelect = (p: Player) => {
+        const nextLabels = new Map(labels);
+        nextLabels.set(p.id, player.m_userId)
+        setLabels(nextLabels);
+    }
     return (
         <Card className="bp3-dark" key={idx}>
             <h2>{player.m_userInitialData.m_name} ({player.m_race}, MMR {mmr})</h2>
             <MenuDivider />
-            <ButtonGroup>
-            <SuggestPlayer/>
-            </ButtonGroup>
+            <SuggestPlayer onSelect={onSelect} players={players}/>
         </Card>
     )
 }
 
 
 const ReplaySummary = (collection: string, replayId: string) => {
-    const [loading, setLoading] = React.useState(true);
-    const [replay, setReplay] = React.useState<Replay | undefined>(undefined);
+    const replayQuery = firebase.firestore().collection(collection).where(firebase.firestore.FieldPath.documentId(), '==', replayId).limit(1);
+    const playerQuery = firebase.firestore().collection('players').withConverter(playerConverter);
 
-    useEffect(() => {
-        const ref = firebase.firestore().collection(collection).doc(replayId)
-        ref.get()
-            .then(doc => {
-                const data = doc.data() as Replay;
-                setReplay(data)
-            })
-            .catch(err => console.error(err))
-            .finally(() => setLoading(false))
-    }, [collection, replayId]);
+    const [labels, setLabels] = React.useState<Map<string, number>>(new Map());
+    const [replays, loading,] = useCollectionDataOnce<Replay>(replayQuery);
+
+    const [players] = useCollectionDataOnce<Player>(playerQuery);
+    const playerArray: Player[] = players ? players! : [];
 
     if (loading) {
         return <Spinner size={Spinner.SIZE_SMALL} />
     }
 
-    const cards = replay!.players.map((player, idx) => {
-        return PlayerCard(player, idx);
+    const cards = replays![0].players.map((player, idx) => {
+        return PlayerCard(player, playerArray, idx, labels, setLabels);
     });
 
-    const overview = Overview(replay!.details);
+    const overview = Overview(replays![0].details);
     return (
         <div>
             {overview}
             {cards}
+            <div className="bp3-dark labeler-footer">
+                <NextUnlabeledReplayButton docId={replayId} />
+                <Button onClick={() => console.log(labels)}>Submit</Button>
+            </div>
         </div>
     )
 }
