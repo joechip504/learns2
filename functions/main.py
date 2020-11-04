@@ -59,12 +59,14 @@ def unzip_replays(event, context):
         blob.download_to_filename(localfile)
         try:
             with ZipFile(localfile, 'r') as zf:
-                for fname in zf.namelist():
-                    print(fname)
-                    if fname.endswith('.SC2Replay'):
-                        print(f'Processing archived file {fname}')
+                for info in zf.infolist():
+                    if info.filename.endswith('.SC2Replay'):
+                        print(f'Processing archived file {info.filename}')
+                        with zf.open(info) as content:
+                            tgtblob = bucket.blob(f'{filename}/{info.CRC}_{info.filename}')
+                            tgtblob.upload_from_file(content)
                     else:
-                        print(f'Skipping {fname}')
+                        print(f'Skipping {info.filename}')
         finally:
             if os.path.exists(localfile):
                 os.remove(localfile)
