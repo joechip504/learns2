@@ -2,7 +2,7 @@ import React from 'react';
 import { useRouteMatch } from 'react-router-dom';
 import * as firebase from 'firebase/app';
 import 'firebase/firestore';
-import { Replay, ReplayDetails, ReplayPlayer } from '../../interfaces/Replay';
+import { Replay, ReplayPlayer } from '../../interfaces/Replay';
 import { Button, Card, MenuDivider, Spinner } from '@blueprintjs/core';
 import SuggestPlayer from './SuggestPlayer';
 import Player from '../../interfaces/Player';
@@ -11,14 +11,17 @@ import NextUnlabeledReplayButton from './NextUnlabeledReplayButton';
 import { useCollectionDataOnce } from 'react-firebase-hooks/firestore';
 import playerConverter from '../io/PlayerConverter';
 
-const Overview = (details: ReplayDetails) => {
+const Overview = (replay: Replay) => {
+    const details = replay.details;
     // Hell if I know
     // https://github.com/Blizzard/s2protocol/blob/master/docs/flags/details.md#details-flag
     const ts = details.m_timeUTC / (10 * 1000 * 1000) - 11644473600 //+ (details.m_timeLocalOffset / 10000000)
     const date = new Date(ts * 1000).toString()
     return <div className="bp3-dark">
         <h1>{details.m_title}</h1>
+        <hr />
         <p>Played at {date}</p>
+        <p>{replay.storageEvent.name}</p>
     </div>
 };
 
@@ -75,12 +78,12 @@ const ReplaySummary = (collection: string, replayId: string) => {
     if (loading) {
         return <Spinner size={Spinner.SIZE_SMALL} />
     }
-
-    const cards = replays![0].players.map((player, idx) => {
+    const replay = replays![0];
+    const cards = replay.players.map((player, idx) => {
         return PlayerCard(player, playerArray, idx, labels, setLabels);
     });
 
-    const overview = Overview(replays![0].details);
+    const overview = Overview(replay);
     return (
         <div>
             {overview}

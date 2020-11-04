@@ -41,4 +41,25 @@ export interface Replay {
     details: ReplayDetails;
     is_labeled: boolean;
     labels?: any;
+    storageEvent: StorageEvent;
 };
+
+export interface StorageEvent {
+    name: string;
+    contentType: string;
+    timeStorageClassUpdated: Date;
+    storageClass: string;
+    mediaLink: string;
+    md5Hash: string;
+    etag: string;
+    id: string;
+    generation: string;
+    kind: string;
+    timeCreated: Date;
+    size: string;
+    metageneration: string;
+    bucket: string;
+    updated: Date;
+    selfLink: string;
+    crc32c: string;
+}
