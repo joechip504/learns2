@@ -36,7 +36,7 @@ export interface MToon {
 };
 
 export interface Replay {
-    docId: String;
+    docId: string;
     players: ReplayPlayer[];
     details: ReplayDetails;
     is_labeled: boolean;

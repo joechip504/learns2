@@ -45,9 +45,32 @@ const ReplaySummary = (collection: string, replayId: string) => {
 
     const [labels, setLabels] = React.useState<Map<string, number>>(new Map());
     const [replays, loading,] = useCollectionDataOnce<Replay>(replayQuery);
+    const [isSubmitting, setIsSubmitting] = React.useState(false);
 
     const [players] = useCollectionDataOnce<Player>(playerQuery);
     const playerArray: Player[] = players ? players! : [];
+
+    const submitEnabled = labels.size > 0 && !isSubmitting;
+
+    const onSubmit = () => {
+        setIsSubmitting(true);
+        if (replays) {
+            const ref = firebase.firestore().collection(collection).doc(replayId)
+            ref.update({
+                'labels': Object.fromEntries(labels),
+                'isLabeled': true
+            })
+            .then(() => true) // notify
+            .catch(err => console.error(err))
+            .finally(() => {
+                setLabels(new Map());
+                setIsSubmitting(false);
+            })
+        }
+        else {
+            setIsSubmitting(false);
+        }
+    }
 
     if (loading) {
         return <Spinner size={Spinner.SIZE_SMALL} />
@@ -64,7 +87,7 @@ const ReplaySummary = (collection: string, replayId: string) => {
             {cards}
             <div className="bp3-dark labeler-footer">
                 <NextUnlabeledReplayButton docId={replayId} />
-                <Button onClick={() => console.log(labels)}>Submit</Button>
+                <Button disabled={!submitEnabled} onClick={onSubmit}>Submit</Button>
             </div>
         </div>
     )
