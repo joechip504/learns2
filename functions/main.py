@@ -63,7 +63,8 @@ def unzip_replays(event, context):
                     if info.filename.endswith('.SC2Replay'):
                         print(f'Processing archived file {info.filename}')
                         with zf.open(info) as content:
-                            tgtblob = bucket.blob(f'{filename}/{info.CRC}_{info.filename}')
+                            folder = filename.replace('.zip', '')
+                            tgtblob = bucket.blob(f'{folder}/{info.CRC}_{info.filename}')
                             tgtblob.upload_from_file(content)
                     else:
                         print(f'Skipping {info.filename}')
