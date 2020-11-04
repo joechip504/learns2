@@ -75,3 +75,5 @@ def unzip_replays(event, context):
         finally:
             if os.path.exists(localfile):
                 os.remove(localfile)
+            # remove the original zip file to save some space
+            blob.delete()
