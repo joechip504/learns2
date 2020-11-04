@@ -1,9 +1,11 @@
 # https://firebase.google.com/docs/hosting/functions
 
+import os
 from io import BytesIO
 from google.cloud import storage, firestore
 from learns2.parser import SC2ReplayParser
 from flask import Request, jsonify
+from zipfile import ZipFile, is_zipfile
 
 
 def ping(req: Request):
@@ -21,22 +23,48 @@ def replay_info(req: Request):
 # https://cloud.google.com/storage/docs/json_api/v1/objects#resource
 def parse_tournament_replay(event, context):
     filename = event['name']
+    localfile = f'/tmp/{filename}'
     if filename.endswith('.SC2Replay'):
         print(f"Processing file: {filename}.")
-        localfile = f'/tmp/{filename}'
         bucketname = event['bucket']
         client = storage.Client()
         bucket = client.get_bucket(bucketname)
         blob = bucket.get_blob(filename)
         blob.download_to_filename(localfile)
-        parser = SC2ReplayParser(localfile)
-        payload = parser.to_dict()
-        payload['storageEvent'] = event
-        db = firestore.Client()
-        ref = db.collection("tournamentReplays")
-        res = ref.where("storage_event.md5Hash", "==", event["md5Hash"]).limit(1).get()
-        if len(res) == 0:
-            ref = db.collection('tournamentReplays').add(payload)
-        else:
-            print(f'replay with checksum {event["md5Hash"]} is already indexed. Skipping.')
+        try:
+            parser = SC2ReplayParser(localfile)
+            payload = parser.to_dict()
+            payload['storageEvent'] = event
+            db = firestore.Client()
+            ref = db.collection("tournamentReplays")
+            res = ref.where("storage_event.md5Hash", "==", event["md5Hash"]).limit(1).get()
+            if len(res) == 0:
+                ref = db.collection('tournamentReplays').add(payload)
+            else:
+                print(f'replay with checksum {event["md5Hash"]} is already indexed. Skipping.')
+        finally:
+            if os.path.exists(localfile):
+                os.remove(localfile)
 
+
+def unzip_replays(event, context):
+    filename = event['name']
+    localfile = f'/tmp/{filename}'
+    if filename.endswith('.zip'):
+        print(f'Expanding zip file {filename}')
+        client = storage.Client()
+        bucketname = event['bucket']
+        bucket = client.get_bucket(bucketname)
+        blob = bucket.get_blob(filename)
+        blob.download_to_filename(localfile)
+        try:
+            with ZipFile(localfile, 'r') as zf:
+                for fname in zf.namelist():
+                    print(fname)
+                    if fname.endswith('.SC2Replay'):
+                        print(f'Processing archived file {fname}')
+                    else:
+                        print(f'Skipping {fname}')
+        finally:
+            if os.path.exists(localfile):
+                os.remove(localfile)
