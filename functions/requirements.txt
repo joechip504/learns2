@@ -1,3 +1,4 @@
 learns2==0.0.9
 google-cloud-storage
 google-cloud-firestore
+python-slugify

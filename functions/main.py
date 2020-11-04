@@ -5,7 +5,8 @@ from io import BytesIO
 from google.cloud import storage, firestore
 from learns2.parser import SC2ReplayParser
 from flask import Request, jsonify
-from zipfile import ZipFile, is_zipfile
+from zipfile import ZipFile
+from slugify import slugify
 
 
 def ping(req: Request):
@@ -23,9 +24,10 @@ def replay_info(req: Request):
 # https://cloud.google.com/storage/docs/json_api/v1/objects#resource
 def parse_tournament_replay(event, context):
     filename = event['name']
-    localfile = f'/tmp/{filename}'
+    slug = slugify(filename)
+    localfile = f'/tmp/{slug}'
     if filename.endswith('.SC2Replay'):
-        print(f"Processing file: {filename}.")
+        print(f"Processing file: {filename} (slug={slug})")
         bucketname = event['bucket']
         client = storage.Client()
         bucket = client.get_bucket(bucketname)
@@ -49,7 +51,8 @@ def parse_tournament_replay(event, context):
 
 def unzip_replays(event, context):
     filename = event['name']
-    localfile = f'/tmp/{filename}'
+    slug = slugify(filename)
+    localfile = f'/tmp/{slug}'
     if filename.endswith('.zip'):
         print(f'Expanding zip file {filename}')
         client = storage.Client()
@@ -63,8 +66,9 @@ def unzip_replays(event, context):
                     if info.filename.endswith('.SC2Replay'):
                         print(f'Processing archived file {info.filename}')
                         with zf.open(info) as content:
-                            folder = filename.replace('.zip', '')
-                            tgtblob = bucket.blob(f'{folder}/{info.CRC}_{info.filename}')
+                            folder = slug.replace('.zip', '')
+                            destfilename = slugify(info.filename)
+                            tgtblob = bucket.blob(f'{folder}/{destfilename}_{info.CRC}')
                             tgtblob.upload_from_file(content)
                     else:
                         print(f'Skipping {info.filename}')
