@@ -11,11 +11,6 @@ protcol76811 = resources.joinpath('Protocol76811.SC2Replay')
 withobservers = resources.joinpath('ScarlettNeebWithObservers.SC2Replay')
 
 
-def test_proto_81433():
-    parser = SC2ReplayParser(everdream)
-    assert "protocol81433" in str(parser.protocol)
-
-
 def test_ladder_1v1_81433_details():
     parser = SC2ReplayParser(everdream)
     details = parser.to_dict()['details']
