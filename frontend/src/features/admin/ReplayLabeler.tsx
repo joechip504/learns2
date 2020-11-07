@@ -25,18 +25,29 @@ const Overview = (replay: Replay) => {
     </div>
 };
 
-const PlayerCard = (player: ReplayPlayer, players: Player[], idx: number, labels: Map<string, number>, setLabels: React.Dispatch<React.SetStateAction<Map<string, number>>>) => {
+const PlayerCard = (
+    player: ReplayPlayer,
+    players: Player[],
+    idx: number,
+    labels: Map<string, number>,
+    localIds: Map<string, string>,
+    setLabels: React.Dispatch<React.SetStateAction<Map<string, number>>>,
+    setLocalIds: React.Dispatch<React.SetStateAction<Map<string, string>>>
+) => {
     const mmr = player.m_userInitialData.m_scaledRating ? player.m_userInitialData.m_scaledRating : 'unknown'
     const onSelect = (p: Player) => {
         const nextLabels = new Map(labels);
-        nextLabels.set(p.id, player.m_userId)
+        const nextLocalIds = new Map(localIds);
+        nextLabels.set(p.id, player.m_userId);
+        nextLocalIds.set(p.id, player.m_localizedId);
         setLabels(nextLabels);
+        setLocalIds(nextLocalIds);
     }
     return (
         <Card className="bp3-dark" key={idx}>
             <h2>{player.m_userInitialData.m_name} ({player.m_race}, MMR {mmr})</h2>
             <MenuDivider />
-            <SuggestPlayer onSelect={onSelect} players={players}/>
+            <SuggestPlayer onSelect={onSelect} players={players} />
         </Card>
     )
 }
@@ -47,6 +58,7 @@ const ReplaySummary = (collection: string, replayId: string) => {
     const playerQuery = firebase.firestore().collection('players').withConverter(playerConverter);
 
     const [labels, setLabels] = React.useState<Map<string, number>>(new Map());
+    const [localIds, setLocalIds] = React.useState<Map<string, string>>(new Map());
     const [replays, loading,] = useCollectionDataOnce<Replay>(replayQuery);
     const [isSubmitting, setIsSubmitting] = React.useState(false);
 
@@ -57,22 +69,19 @@ const ReplaySummary = (collection: string, replayId: string) => {
 
     const onSubmit = () => {
         setIsSubmitting(true);
-        if (replays) {
-            const ref = firebase.firestore().collection(collection).doc(replayId)
-            ref.update({
-                'labels': Object.fromEntries(labels),
-                'isLabeled': true
-            })
+        console.log(labels)
+        console.log(localIds)
+        const ref = firebase.firestore().collection(collection).doc(replayId)
+        ref.update({
+            'labels': Object.fromEntries(labels),
+            'isLabeled': true
+        })
             .then(() => true) // notify
             .catch(err => console.error(err))
             .finally(() => {
                 setLabels(new Map());
                 setIsSubmitting(false);
             })
-        }
-        else {
-            setIsSubmitting(false);
-        }
     }
 
     if (loading) {
@@ -80,9 +89,10 @@ const ReplaySummary = (collection: string, replayId: string) => {
     }
     const replay = replays![0];
     const cards = replay.players.map((player, idx) => {
-        return PlayerCard(player, playerArray, idx, labels, setLabels);
+        return PlayerCard(player, playerArray, idx, labels, localIds, setLabels, setLocalIds);
     });
 
+    const submitSpinner = isSubmitting ? <Spinner /> : null;
     const overview = Overview(replay);
     return (
         <div>
@@ -91,6 +101,7 @@ const ReplaySummary = (collection: string, replayId: string) => {
             <div className="bp3-dark labeler-footer">
                 <NextUnlabeledReplayButton docId={replayId} />
                 <Button disabled={!submitEnabled} onClick={onSubmit}>Submit</Button>
+                {submitSpinner}
             </div>
         </div>
     )
