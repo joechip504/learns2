@@ -77,4 +77,3 @@ def test_observers():
     assert neeb['m_userInitialData']['m_clanTag'] == 'Ting'
     assert scarlett['m_userInitialData']['m_name'] == 'Scarlett'
     assert scarlett['m_userInitialData']['m_clanTag'] == 'ADEPTd'
-    print()
