@@ -8,6 +8,7 @@ everdream = resources.joinpath('EverDream.SC2Replay')
 spainvukraine = resources.joinpath('SpainVsUkraine.SC2Replay')
 finlandvsk = resources.joinpath('FinlandVsSouthKorea.SC2Replay')
 protcol76811 = resources.joinpath('Protocol76811.SC2Replay')
+withobservers = resources.joinpath('ScarlettNeebWithObservers.SC2Replay')
 
 
 def test_proto_81433():
@@ -53,17 +54,32 @@ def test_ladder_1v1_81433_events():
     assert hotkeys[4] == 37
     assert hotkeys[5] == 159
 
+
 def test_spain_vs_ukraine():
     parser = SC2ReplayParser(spainvukraine)
     players = parser.to_dict()['players']
     assert len(players) == 2
+
 
 def test_finland_vs_south_korea():
     parser = SC2ReplayParser(finlandvsk)
     players = parser.to_dict()['players']
     assert len(players) == 2
 
+
 def test_protocol_76811():
     parser = SC2ReplayParser(protcol76811)
     players = parser.to_dict()['players']
     assert len(players) == 2
+
+
+def test_observers():
+    parser = SC2ReplayParser(withobservers)
+    players = parser.to_dict()['players']
+    assert len(players) == 2
+    neeb, scarlett = players[0], players[1]
+    assert neeb['m_userInitialData']['m_name'] == 'Neeb'
+    assert neeb['m_userInitialData']['m_clanTag'] == 'Ting'
+    assert scarlett['m_userInitialData']['m_name'] == 'Scarlett'
+    assert scarlett['m_userInitialData']['m_clanTag'] == 'ADEPTd'
+    print()
