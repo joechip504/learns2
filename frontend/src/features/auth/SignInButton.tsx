@@ -27,11 +27,11 @@ const uiConfig: firebaseui.auth.Config = {
 
 const SignInButton = () => {
     const [user, loading, error] = useAuthState(firebase.auth());
-    if (!user || error) {
-        return <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={firebase.auth()} />;
-    }
-    else if (loading) {
+    if (loading) {
         return <Spinner size={Spinner.SIZE_SMALL} />
+    }
+    else if (!user || error) {
+        return <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={firebase.auth()} />;
     }
     else return null;
 }
