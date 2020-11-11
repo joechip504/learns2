@@ -74,7 +74,8 @@ const ReplaySummary = (collection: string, replayId: string) => {
         const ref = firebase.firestore().collection(collection).doc(replayId)
         ref.update({
             'labels': Object.fromEntries(labels),
-            'isLabeled': true
+            'isLabeled': true,
+            'timestamp': firebase.firestore.FieldValue.serverTimestamp()
         })
             .then(() => true) // notify
             .catch(err => console.error(err))

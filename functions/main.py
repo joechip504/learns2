@@ -13,6 +13,8 @@ def ping(req: Request):
     return 'Pong!'
 
 
+# https://firebase.google.com/docs/auth/admin/verify-id-tokens#web
+# https://firebase.google.com/docs/admin/migrate-python-v3
 def replay_info(req: Request):
     replay = req.files['replay']
     replay = BytesIO(replay.read())
@@ -37,8 +39,10 @@ def parse_tournament_replay(event, context):
             parser = SC2ReplayParser(localfile)
             payload = parser.to_dict()
             payload['storageEvent'] = event
+            payload['timestamp'] = firestore.SERVER_TIMESTAMP
             db = firestore.Client()
             ref = db.collection("tournamentReplays")
+            # TODO this should be in a transaction
             res = ref.where("storage_event.md5Hash", "==", event["md5Hash"]).limit(1).get()
             if len(res) == 0:
                 ref = db.collection('tournamentReplays').add(payload)
