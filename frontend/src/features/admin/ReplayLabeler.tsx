@@ -38,7 +38,7 @@ const PlayerCard = (
     const onSelect = (p: Player) => {
         const nextLabels = new Map(labels);
         const nextLocalIds = new Map(localIds);
-        nextLabels.set(p.id, player.m_userId);
+        nextLabels.set(`player_${p.id}`, player.m_userId);
         nextLocalIds.set(p.id, player.m_localizedId);
         setLabels(nextLabels);
         setLocalIds(nextLocalIds);
@@ -80,6 +80,7 @@ const ReplaySummary = (collection: string, replayId: string) => {
             .catch(err => console.error(err))
             .finally(() => {
                 setLabels(new Map());
+                setLocalIds(new Map());
                 setIsSubmitting(false);
             })
     }
@@ -92,7 +93,7 @@ const ReplaySummary = (collection: string, replayId: string) => {
         return PlayerCard(player, playerArray, idx, labels, localIds, setLabels, setLocalIds);
     });
 
-    const submitSpinner = isSubmitting ? <Spinner /> : null;
+    const submitSpinner = isSubmitting ? <Spinner size={Spinner.SIZE_SMALL}/> : null;
     const overview = Overview(replay);
     return (
         <div>
@@ -102,6 +103,10 @@ const ReplaySummary = (collection: string, replayId: string) => {
                 <NextUnlabeledReplayButton docId={replayId} />
                 <Button disabled={!submitEnabled} onClick={onSubmit}>Submit</Button>
                 {submitSpinner}
+            </div>
+            <div className="bp3-dark">
+            <h3>Labels</h3><p>{JSON.stringify(Object.fromEntries(labels))}</p>
+            <h3>LocalIds</h3><p>{JSON.stringify(Object.fromEntries(localIds))}</p>
             </div>
         </div>
     )
