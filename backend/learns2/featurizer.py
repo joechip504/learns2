@@ -1,3 +1,4 @@
+from learns2.constants import races
 from learns2.parser import SC2ReplayParser
 from collections import deque, defaultdict
 from collections.abc import Iterator
@@ -33,29 +34,76 @@ def get_all_frames(replay, num_frames=500):
     itr = EventIterator(parser.events(), num_frames)
     return list(itr)
 
+def get_players(replay):
+    parser = SC2ReplayParser(replay)
+    return parser.players()
+
 
 class SC2ReplayFeaturizer(object):
+    MAX_SELECTION_SIZE = 1000
+
     def __init__(self, replay, user_id: int, num_frames: int = 500, num_camera_hotspots: int = 5):
         self.frames = get_all_frames(replay, num_frames)
+        self.players = get_players(replay)
         self.user_id = user_id
         self.num_camera_hotspots = num_camera_hotspots
+
+    def feature(self) -> List[List[int]]:
+        f1 = self.hotkey_feature()
+        f2 = self.camera_hotspots_feature()
+        return []
 
     def hotkey_feature(self):
         features = []
         for frame in self.frames:
             feature = [0] * 10
             for event in frame:
-                if event['_event'] == 'NNet.Game.SControlGroupUpdateEvent' and event['_userid']['m_userId'] == self.user_id:
+                if event['_event'] == 'NNet.Game.SControlGroupUpdateEvent' \
+                        and event['_userid']['m_userId'] == self.user_id:
                     idx = event['m_controlGroupIndex']
                     feature[idx] = 1
             features.append(feature)
         return features
 
-    def gameloop_feature(self):
-        pass
+    def target_feature(self):
+        features = []
+        for frame in self.frames:
+            feature = [0, 0]
+            for event in frame:
+                if event['_userid']['m_userId'] == self.user_id:
+                    if event['_event'] == 'NNet.Game.SCmdUpdateTargetPointEvent':
+                        feature[0] = 1
+                    elif event['_event'] == 'NNet.Game.SCmdUpdateTargetPointEvent':
+                        feature[1] = 1
+            features.append(feature)
+        return features
 
-    def races_feature(self, frames: List):
-        pass
+    def races_feature(self):
+        feature = [0, 0, 0]
+        for p in self.players:
+            if p['m_userId'] == self.user_id:
+                race = races[p['m_race']]
+                if race == 'Protoss':
+                    feature[0] = 1
+                elif race == 'Terran':
+                    feature[1] = 1
+                elif race == 'Zerg':
+                    feature[2] = 1
+        return [feature for _ in self.frames]
+
+    def selection_feature(self):
+        features = []
+        for frame in self.frames:
+            # This potentially overwrites earlier events in the rare case where there are multiple selection delta
+            # events in a single gameloop. A quick scan of my replay folder found 0 occurrences of this, so I'm going to
+            # ignore that case in the interest of simplicity.
+            feature = [0]
+            for event in frame:
+                if event['_event'] == 'NNet.Game.SSelectionDeltaEvent' and event['_userid']['m_userId'] == self.user_id:
+                    num_selected = len(event['m_delta']['m_addUnitTags'])
+                    feature = [num_selected / self.MAX_SELECTION_SIZE]
+            features.append(feature)
+        return features
 
     def camera_hotspots_feature(self):
         # Count the number of times the player visited each (x, y) location

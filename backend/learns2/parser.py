@@ -82,7 +82,7 @@ class SC2ReplayParser(object):
                 player['m_localizedId'] = '{}/{}/{}'.format(player['m_toon']['m_region'], player['m_toon']['m_realm'],
                                                             player['m_toon']['m_id'])
                 player_objects.append(player)
-        return player_objects
+        return [decode_utf8(obj) for obj in player_objects]
 
     def small_details(self):
         details = self.details()
