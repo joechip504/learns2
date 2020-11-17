@@ -34,3 +34,23 @@ def test_hotkey():
             assert (value == 0 or value == 1)
     pressed_one = [h for h in hotkeys if h[1] == 1]
     assert len(pressed_one) == 111
+
+def test_selection():
+    f = SC2ReplayFeaturizer(everdream, user_id=1, num_frames=5000, num_camera_hotspots=5)
+    selections = f.selection_feature()
+    assert len(selections) == 5000
+    nonempty = [s for s in selections if s[0] > 0]
+    assert len(nonempty) == 90
+
+def test_target():
+    f = SC2ReplayFeaturizer(everdream, user_id=1, num_frames=5000, num_camera_hotspots=5)
+    targets = f.target_feature()
+    assert len(targets) == 5000
+    nonempty = [xs for xs in targets if xs[0] > 0 or xs[1] > 0]
+    assert len(nonempty) == 80
+
+def test_races():
+    f = SC2ReplayFeaturizer(everdream, user_id=1, num_frames=5000, num_camera_hotspots=5)
+    targets = f.races_feature()
+    assert len(targets) == 5000
+    assert targets[0] == [1, 0, 0]
