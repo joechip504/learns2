@@ -47,10 +47,28 @@ def test_target():
     targets = f.target_feature()
     assert len(targets) == 5000
     nonempty = [xs for xs in targets if xs[0] > 0 or xs[1] > 0]
-    assert len(nonempty) == 80
+    assert len(nonempty) == 111
 
 def test_races():
     f = SC2ReplayFeaturizer(everdream, user_id=1, num_frames=5000, num_camera_hotspots=5)
     targets = f.races_feature()
     assert len(targets) == 5000
     assert targets[0] == [1, 0, 0]
+
+def test_feature():
+    f = SC2ReplayFeaturizer(everdream, user_id=1, num_frames=5000, num_camera_hotspots=5)
+    feature = f.feature()
+    assert len(feature) == 5000
+    for xs in feature:
+        assert len(xs) == 22
+
+def test_event_ratio():
+    f = SC2ReplayFeaturizer(everdream, user_id=1, num_frames=99999, num_camera_hotspots=5)
+    from collections import defaultdict
+    d = defaultdict(int)
+    for xs in f.frames:
+        for event in xs:
+            if event['_userid']['m_userId'] == 1:
+                d[event['_event']] += 1
+    from pprint import pprint
+    pprint(d)

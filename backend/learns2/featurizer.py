@@ -26,6 +26,8 @@ class EventIterator(Iterator):
         while self.events and self.events[0]['_gameloop'] == self.frame:
             buf.append(self.events.popleft())
         self.frame += 1
+        if not self.events and not buf:
+            raise StopIteration
         return buf
 
 
@@ -50,8 +52,26 @@ class SC2ReplayFeaturizer(object):
 
     def feature(self) -> List[List[int]]:
         f1 = self.hotkey_feature()
-        f2 = self.camera_hotspots_feature()
-        return []
+        f2 = self.target_feature()
+        f3 = self.races_feature()
+        f4 = self.selection_feature()
+        f5 = self.camera_hotspots_feature()
+        f6 = self.scmd_feature()
+        features = []
+        for (i, j, k, x, y, z) in zip(f1, f2, f3, f4, f5, f6):
+            features.append(i + j + k + x + y + z)
+        return features
+
+    def scmd_feature(self):
+        features = []
+        for frame in self.frames:
+            feature = [0]
+            for event in frame:
+                if event['_event'] == 'NNet.Game.SCmdEvent' \
+                        and event['_userid']['m_userId'] == self.user_id:
+                    feature = [1]
+            features.append(feature)
+        return features
 
     def hotkey_feature(self):
         features = []
@@ -73,7 +93,7 @@ class SC2ReplayFeaturizer(object):
                 if event['_userid']['m_userId'] == self.user_id:
                     if event['_event'] == 'NNet.Game.SCmdUpdateTargetPointEvent':
                         feature[0] = 1
-                    elif event['_event'] == 'NNet.Game.SCmdUpdateTargetPointEvent':
+                    elif event['_event'] == 'NNet.Game.SCmdUpdateTargetUnitEvent':
                         feature[1] = 1
             features.append(feature)
         return features
