@@ -31,22 +31,18 @@ class EventIterator(Iterator):
         return buf
 
 
-def get_all_frames(replay, num_frames=500):
+def preprocess(replay, num_frames):
     parser = SC2ReplayParser(replay)
+    players = parser.players()
     itr = EventIterator(parser.events(), num_frames)
-    return list(itr)
-
-def get_players(replay):
-    parser = SC2ReplayParser(replay)
-    return parser.players()
+    return players, list(itr)
 
 
 class SC2ReplayFeaturizer(object):
     MAX_SELECTION_SIZE = 1000
 
     def __init__(self, replay, user_id: int, num_frames: int = 500, num_camera_hotspots: int = 5):
-        self.frames = get_all_frames(replay, num_frames)
-        self.players = get_players(replay)
+        self.players, self.frames = preprocess(replay, num_frames)
         self.user_id = user_id
         self.num_camera_hotspots = num_camera_hotspots
 
