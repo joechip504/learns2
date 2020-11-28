@@ -1,6 +1,7 @@
 # https://firebase.google.com/docs/hosting/functions
 
 import os
+import json
 from io import BytesIO
 from google.cloud import storage, firestore
 from learns2.parser import SC2ReplayParser
@@ -81,3 +82,22 @@ def unzip_replays(event, context):
                 os.remove(localfile)
             # remove the original zip file to save some space
             blob.delete()
+
+
+# https://cloud.google.com/functions/docs/calling/cloud-firestore#functions_firebase_firestore-python
+# https://cloud.google.com/firestore/docs/manage-data/add-data#python_11
+def update_player_cache(data, context):
+    """Maintains document /caches/allPlayers by reacting to any write in the 'players' collection.
+
+    :param data: event data
+    :param context: event context
+    :return: None
+    """
+    old = data['oldValue']
+    new = data['newValue']
+    db = firestore.Client()
+    ref: firestore.DocumentReference = db.collection('caches').document('allPlayers')
+    batch: firestore.WriteBatch = db.batch()
+    batch.update(ref, {'items': firestore.ArrayRemove([old])})
+    batch.update(ref, {'items': firestore.ArrayUnion([new])})
+    batch.commit()
