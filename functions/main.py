@@ -98,10 +98,11 @@ def update_player_cache(data, context):
     print('context')
     print(context)
     old = data['oldValue']
-    new = data['newValue']
+    new = data['value']
     db = firestore.Client()
     ref: firestore.DocumentReference = db.collection('caches').document('allPlayers')
     batch: firestore.WriteBatch = db.batch()
-    batch.update(ref, {'items': firestore.ArrayRemove([old])})
-    batch.update(ref, {'items': firestore.ArrayUnion([new])})
+    if old and old.get('fields'):
+        batch.update(ref, {'items': firestore.ArrayRemove([old['fields']])})
+    batch.update(ref, {'items': firestore.ArrayUnion([new['fields']])})
     batch.commit()
