@@ -88,6 +88,9 @@ def to_player(payload):
     player = {}
     for key, value in payload.items():
         player[key] = value.get('stringValue')
+    uid = payload.get('name')
+    if uid:
+        player['id'] = uid.split('/')[-1]
     return player
 
 # https://cloud.google.com/functions/docs/calling/cloud-firestore#functions_firebase_firestore-python
