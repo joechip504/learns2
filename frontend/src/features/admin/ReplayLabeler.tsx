@@ -8,8 +8,7 @@ import SuggestPlayer from './SuggestPlayer';
 import Player from '../../interfaces/Player';
 import './NextUnlabeledReplayButton';
 import NextUnlabeledReplayButton from './NextUnlabeledReplayButton';
-import { useCollectionDataOnce } from 'react-firebase-hooks/firestore';
-import playerConverter from '../io/PlayerConverter';
+import { useCollectionDataOnce, useDocument } from 'react-firebase-hooks/firestore';
 
 const Overview = (replay: Replay) => {
     const details = replay.details;
@@ -55,15 +54,17 @@ const PlayerCard = (
 
 const ReplaySummary = (collection: string, replayId: string) => {
     const replayQuery = firebase.firestore().collection(collection).where(firebase.firestore.FieldPath.documentId(), '==', replayId).limit(1);
-    const playerQuery = firebase.firestore().collection('players').withConverter(playerConverter);
-
+    const allPlayersQuery = firebase.firestore().doc('caches/allPlayers');
     const [labels, setLabels] = React.useState<Map<string, number>>(new Map());
     const [localIds, setLocalIds] = React.useState<Map<string, string>>(new Map());
     const [replays, loading,] = useCollectionDataOnce<Replay>(replayQuery);
     const [isSubmitting, setIsSubmitting] = React.useState(false);
+    const [players] = useDocument(allPlayersQuery);
 
-    const [players] = useCollectionDataOnce<Player>(playerQuery);
-    const playerArray: Player[] = players ? players! : [];
+    let playerArray: Player[] = [];
+    if (players && players.data()){
+        playerArray = (players.data() as any)['objects'] as Player[];
+    }
 
     const submitEnabled = labels.size > 0 && !isSubmitting;
 
