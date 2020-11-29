@@ -86,7 +86,7 @@ def unzip_replays(event, context):
 
 def to_player(payload):
     player = {}
-    for key, value in payload.items():
+    for key, value in payload['fields'].items():
         player[key] = value.get('stringValue')
     uid = payload.get('name')
     if uid:
@@ -112,8 +112,9 @@ def update_player_cache(data, context):
     ref: firestore.DocumentReference = db.collection('caches').document('allPlayers')
     batch: firestore.WriteBatch = db.batch()
     if old and old.get('fields'):
-        old_player = to_player(old['fields'])
+        old_player = to_player(old)
         batch.update(ref, {'objects': firestore.ArrayRemove([old_player])})
-    new_player = to_player(new['fields'])
+    new_player = to_player(new)
     batch.update(ref, {'objects': firestore.ArrayUnion([new_player])})
+    print('new player:', new_player)
     batch.commit()
