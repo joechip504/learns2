@@ -90,12 +90,24 @@ def preprocess(dbconf: DBConf, knobs: Knobs, games_per_player: int):
                 log.warning(f'Skipping {replay_id}: {e}')
                 pass
             if len(candidates) >= games_per_player:
-                data[player] = deepcopy(candidates)
                 log.info(f'finished preprocessing for player={player}')
                 if knobs.stop_after != 0:
                     if total >= knobs.stop_after:
-                        return (data, total, shape)
+                        data[player] = deepcopy(candidates)
+                        return data, total, shape
                 break
+        data[player] = deepcopy(candidates)
+
+
+    # To avoid issues when stratify-ing the data, make sure each class has _exactly_ the same number of samples
+    tgt_num_samples = min([len(xs) for xs in data.values()])
+    log.info(f'target_num_samples={tgt_num_samples}')
+    for player, samples in data.items():
+        log.info(f'player={player}, num_samples={len(samples)}')
+        while len(samples) > tgt_num_samples:
+            log.info(f'removing a sample from player={player}')
+            samples.pop()
+        log.info(f'player={player}, num_samples={len(samples)}')
 
     return data, total, shape
 
@@ -134,8 +146,7 @@ def build_split(preprocessed: dict, players_one_hot: dict, total: int, feature_s
 
     # https://stackoverflow.com/a/46716676
     # use 'stratify' to ensure a correct train/test split _per player_, not just globally
-
-    return train_test_split(all_data, all_labels, test_size=knobs.pct_validate, stratify=all_labels)
+    return train_test_split(all_data, all_labels, test_size=0.2, stratify=all_labels)
 
 
 def build_model(one_replay_shape: np.shape, one_label_shape: np.shape, knobs: Knobs):
@@ -165,7 +176,7 @@ def bootstrap():
     parser.add_argument('--pct_dropout', help='model dropout. default 20 percent', default=20, type=int)
     parser.add_argument('--pct_recurrent_dropout', help='model recurrent dropout. default 20', default=20, type=int)
     parser.add_argument('--num_epochs', help='number of epochs', default=300, type=int)
-    parser.add_argument('--batch_size', help='batch size. typically power of 2', default=128)
+    parser.add_argument('--batch_size', help='batch size. typically power of 2', default=128, type=int)
     parser.add_argument('--num_frames', help='number of frames per replay', default=600, type=int)
     parser.add_argument('--num_camera_hotspots', help='number of frames per replay', default=3, type=int)
     parser.add_argument('--stop_after', help='for quick runs while debugging. 0 to disable', default=0, type=int)
