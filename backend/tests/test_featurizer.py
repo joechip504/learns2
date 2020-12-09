@@ -57,7 +57,7 @@ def test_races():
     f = SC2ReplayFeaturizer(everdream, user_id=1, num_frames=5000, num_camera_hotspots=5)
     targets = f.races_feature()
     assert len(targets) == 5000
-    assert targets[0] == [1, 0, 0]
+    assert targets[0] == [0.2]
 
 
 def test_feature():
@@ -66,7 +66,7 @@ def test_feature():
     assert len(feature) == 5000
     assert f.feature_shape() == feature.shape
     for xs in feature:
-        assert len(xs) == 22
+        assert len(xs) == 20
 
 
 def test_event_ratio():
