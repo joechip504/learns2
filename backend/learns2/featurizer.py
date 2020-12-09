@@ -3,6 +3,7 @@ from learns2.parser import SC2ReplayParser
 from collections import deque, defaultdict
 from collections.abc import Iterator
 from typing import List
+import numpy
 
 
 class EventIterator(Iterator):
@@ -38,15 +39,21 @@ def preprocess(replay, num_frames):
     return players, list(itr)
 
 
+# TODO numpy everything
 class SC2ReplayFeaturizer(object):
     MAX_SELECTION_SIZE = 1000
 
+    def feature_shape(self):
+        return self.num_frames, 15 + self.num_camera_hotspots
+        #return self.num_frames, 11
+
     def __init__(self, replay, user_id: int, num_frames: int = 500, num_camera_hotspots: int = 5):
         self.players, self.frames = preprocess(replay, num_frames)
+        self.num_frames = num_frames
         self.user_id = user_id
         self.num_camera_hotspots = num_camera_hotspots
 
-    def feature(self) -> List[List[int]]:
+    def feature(self):
         f1 = self.hotkey_feature()
         f2 = self.target_feature()
         f3 = self.races_feature()
@@ -56,7 +63,11 @@ class SC2ReplayFeaturizer(object):
         features = []
         for (i, j, k, x, y, z) in zip(f1, f2, f3, f4, f5, f6):
             features.append(i + j + k + x + y + z)
-        return features
+            #features.append(i + k)
+
+        arr = numpy.array(features)
+        assert arr.shape == self.feature_shape(), 'Bad feature shape!'
+        return arr
 
     def scmd_feature(self):
         features = []
@@ -95,16 +106,16 @@ class SC2ReplayFeaturizer(object):
         return features
 
     def races_feature(self):
-        feature = [0, 0, 0]
+        feature = [0]
         for p in self.players:
             if p['m_userId'] == self.user_id:
                 race = races[p['m_race']]
                 if race == 'Protoss':
-                    feature[0] = 1
+                    feature[0] = 0.2
                 elif race == 'Terran':
-                    feature[1] = 1
+                    feature[0] = 0.4
                 elif race == 'Zerg':
-                    feature[2] = 1
+                    feature[0] = 0.6
         return [feature for _ in self.frames]
 
     def selection_feature(self):

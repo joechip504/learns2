@@ -64,6 +64,7 @@ def test_feature():
     f = SC2ReplayFeaturizer(everdream, user_id=1, num_frames=5000, num_camera_hotspots=5)
     feature = f.feature()
     assert len(feature) == 5000
+    assert f.feature_shape() == feature.shape
     for xs in feature:
         assert len(xs) == 22
 

@@ -22,14 +22,14 @@ class SC2ReplayParser(object):
         # https://github.com/Blizzard/s2protocol/issues/99
         # If the protocol is not defined, the previous protocol often works anyway
         except ImportError as e:
-            print(f'Unable to import protocol{base_build}.py. Module does not exist')
+            # print(f'Unable to import protocol{base_build}.py. Module does not exist')
             base_path = os.path.dirname(versions.__file__)
             protocols = set([p for p in os.listdir(base_path)])
             while base_build > 0:
                 base_build -= 1
                 candidate = f'protocol{base_build}.py'
                 if candidate in protocols:
-                    print(f'Falling back to {candidate}')
+                    # print(f'Falling back to {candidate}')
                     return versions.build(base_build)
             raise e
 

@@ -1,3 +1,8 @@
+import tensorflow as tf
+
+gpu_devices = tf.config.experimental.list_physical_devices('GPU')
+for device in gpu_devices: tf.config.experimental.set_memory_growth(device, True)
+
 import logging
 import sqlite3
 from argparse import ArgumentParser
@@ -8,7 +13,8 @@ from io import BytesIO
 import numpy as np
 from sklearn.model_selection import train_test_split
 from tensorflow import keras
-from tensorflow.keras.layers import Bidirectional, LSTM, Dense
+from tensorflow.keras.layers import Bidirectional, LSTM, Dense, Embedding, Flatten, GRU
+from tensorflow.keras import activations
 
 from learns2.featurizer import SC2ReplayFeaturizer
 
@@ -28,7 +34,7 @@ class Knobs(object):
     num_epochs: int
     batch_size: int
     pct_validate: float
-    num_frames: int
+    num_frames: int  # https://github.com/Blizzard/s2protocol/issues/70#issuecomment-379000527
     num_camera_hotspots: int
     stop_after: int
 
@@ -91,23 +97,13 @@ def preprocess(dbconf: DBConf, knobs: Knobs, games_per_player: int):
                 pass
             if len(candidates) >= games_per_player:
                 log.info(f'finished preprocessing for player={player}')
-                if knobs.stop_after != 0:
-                    if total >= knobs.stop_after:
-                        data[player] = deepcopy(candidates)
-                        return data, total, shape
                 break
+
         data[player] = deepcopy(candidates)
-
-
-    # To avoid issues when stratify-ing the data, make sure each class has _exactly_ the same number of samples
-    tgt_num_samples = min([len(xs) for xs in data.values()])
-    log.info(f'target_num_samples={tgt_num_samples}')
-    for player, samples in data.items():
-        log.info(f'player={player}, num_samples={len(samples)}')
-        while len(samples) > tgt_num_samples:
-            log.info(f'removing a sample from player={player}')
-            samples.pop()
-        log.info(f'player={player}, num_samples={len(samples)}')
+        if knobs.stop_after != 0:
+            if total >= knobs.stop_after:
+                data[player] = deepcopy(candidates)
+                return data, total, shape
 
     return data, total, shape
 
@@ -146,21 +142,20 @@ def build_split(preprocessed: dict, players_one_hot: dict, total: int, feature_s
 
     # https://stackoverflow.com/a/46716676
     # use 'stratify' to ensure a correct train/test split _per player_, not just globally
-    return train_test_split(all_data, all_labels, test_size=0.2, stratify=all_labels)
+    return train_test_split(all_data, all_labels, test_size=knobs.pct_validate, stratify=all_labels)
 
 
+# https://docs.nvidia.com/deeplearning/cudnn/release-notes/rel_8.html#rel-805
+# If you get cuda issues on windows, just disable it.
+# Hours wasted trying to debug and the answer seems to be don't use windows
 def build_model(one_replay_shape: np.shape, one_label_shape: np.shape, knobs: Knobs):
     num_players = one_label_shape[0]
     model = keras.Sequential()
-    model.add(Bidirectional(LSTM(num_players, input_shape=one_replay_shape, dropout=knobs.dropout,
-                                 recurrent_dropout=knobs.recurrent_dropout, return_sequences=True),
-                            input_shape=one_replay_shape))
-    model.add(Bidirectional(LSTM(num_players, input_shape=one_replay_shape, dropout=knobs.dropout,
-                                 recurrent_dropout=knobs.recurrent_dropout, return_sequences=True),
-                            input_shape=one_replay_shape))
-    model.add(Bidirectional(LSTM(num_players, input_shape=one_replay_shape, dropout=knobs.dropout,
-                                 recurrent_dropout=knobs.recurrent_dropout), input_shape=one_replay_shape))
-    model.add(Dense(num_players, activation='softmax'))
+    batch_input_shape = [knobs.batch_size] + list(one_replay_shape)
+    hidden_units = 64
+    model.add(GRU(hidden_units, input_shape=one_replay_shape, dropout=knobs.dropout))
+    model.add(Dense(hidden_units, activation=activations.sigmoid))
+    model.add(Dense(num_players, activation=activations.softmax))
     return model
 
 
@@ -198,12 +193,11 @@ def main():
         num_camera_hotspots=args.num_camera_hotspots,
         stop_after=args.stop_after
     )
-    (preprocessed, total, shape) = preprocess(dbconf, knobs, args.games_per_player)
+    preprocessed, total, shape = preprocess(dbconf, knobs, args.games_per_player)
     players_one_hot = build_one_hot(preprocessed)
     replay_train, replay_test, label_train, label_test = build_split(preprocessed, players_one_hot, total, shape, knobs)
     model = build_model(replay_train[0].shape, label_train[0].shape, knobs)
     print(model.summary())
-
     model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
     model.fit(replay_train, label_train, validation_data=(replay_test, label_test), epochs=knobs.num_epochs,
               batch_size=knobs.batch_size, shuffle=True)
