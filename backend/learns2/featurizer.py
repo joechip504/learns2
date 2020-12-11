@@ -45,7 +45,6 @@ class SC2ReplayFeaturizer(object):
 
     def feature_shape(self):
         return self.num_frames, 15 + self.num_camera_hotspots
-        #return self.num_frames, 11
 
     def __init__(self, replay, user_id: int, num_frames: int = 500, num_camera_hotspots: int = 5):
         self.players, self.frames = preprocess(replay, num_frames)
@@ -63,7 +62,6 @@ class SC2ReplayFeaturizer(object):
         features = []
         for (i, j, k, x, y, z) in zip(f1, f2, f3, f4, f5, f6):
             features.append(i + j + k + x + y + z)
-            #features.append(i + k)
 
         arr = numpy.array(features)
         assert arr.shape == self.feature_shape(), 'Bad feature shape!'
