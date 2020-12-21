@@ -1,24 +1,18 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import { store } from './app/store';
-import { Provider } from 'react-redux';
 import * as serviceWorker from './serviceWorker';
 
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
-import Header from './features/header/Header';
-import AdminView from './features/admin/AdminView';
 
 import * as firebase from 'firebase/app';
 import 'firebase/analytics'
 import 'firebase/performance'
 import 'firebase/auth'
 import 'firebase/firestore'
-import ReplayLabeler from './features/admin/ReplayLabeler';
-import HomePage from './features/home/HomePage';
 import './App.css';
 import 'normalize.css'
 import '@blueprintjs/core/lib/css/blueprint.css';
+import App from './App';
 
 export const firebaseConfig = {
   apiKey: "AIzaSyDT5NEcgiF-e83SwJtIt5BqWldzlwoklTM",
@@ -33,27 +27,7 @@ export const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
-ReactDOM.render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <BrowserRouter>
-        <Header />
-        <Switch>
-          <Route path="/admin">
-            <AdminView />
-          </Route>
-          <Route path="/edit/:collection/:replayId">
-            <ReplayLabeler />
-          </Route>
-          <Route path="/">
-            <HomePage />
-          </Route>
-        </Switch>
-      </BrowserRouter>
-    </Provider>
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+ReactDOM.render(<App/>, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

@@ -1,8 +1,5 @@
 import React from 'react';
 import { Navbar, Button, Alignment, NavbarDivider, NavbarHeading, Icon } from '@blueprintjs/core';
-import { RootState } from '../../app/store';
-import { AuthState } from '../../store/auth/types';
-import { connect } from 'react-redux';
 import SignInButton from '../auth/SignInButton';
 import SignOutButton from '../auth/SignOutButton';
 import { useAuthState } from 'react-firebase-hooks/auth';
@@ -11,14 +8,7 @@ import { Link } from 'react-router-dom';
 
 const onClick = () => { window.open('https://github.com/joechip504/learns2', '_blank') }
 
-interface Props {
-    auth: AuthState;
-}
-const mapState = (root: RootState): Props => {
-    return { auth: root.auth }
-}
-
-const Header = (props: Props) => {
+const Header = () => {
     // firebase-ui does something weird where it automatically removes the button after login
     // it throw errors if this check is bundled with the button component
     // either have to spend some time debugging that or just add a one-line check here ;)
@@ -50,4 +40,4 @@ const Header = (props: Props) => {
     )
 }
 
-export default connect(mapState)(Header);
+export default Header;

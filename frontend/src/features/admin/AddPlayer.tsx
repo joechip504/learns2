@@ -1,14 +1,8 @@
 import React, { useState } from 'react';
-import { RootState } from '../../app/store';
-import { connect } from 'react-redux';
 import { Button, Divider, FormGroup, InputGroup, Intent, Spinner } from '@blueprintjs/core';
 import * as firebase from 'firebase/app';
 
-interface Props { };
-
-const mapState = (root: RootState): Props => { return {}; }
-
-const AddPlayer = (props: Props) => {
+const AddPlayer = () => {
 
     const playersRef = firebase.firestore().collection('players')
     const [loading, setLoading] = React.useState(false);
@@ -65,4 +59,4 @@ const AddPlayer = (props: Props) => {
     );
 }
 
-export default connect(mapState)(AddPlayer);
+export default AddPlayer;
