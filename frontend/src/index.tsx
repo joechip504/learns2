@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
 import { store } from './app/store';
 import { Provider } from 'react-redux';
 import * as serviceWorker from './serviceWorker';
@@ -16,6 +15,10 @@ import 'firebase/performance'
 import 'firebase/auth'
 import 'firebase/firestore'
 import ReplayLabeler from './features/admin/ReplayLabeler';
+import HomePage from './features/home/HomePage';
+import './App.css';
+import 'normalize.css'
+import '@blueprintjs/core/lib/css/blueprint.css';
 
 export const firebaseConfig = {
   apiKey: "AIzaSyDT5NEcgiF-e83SwJtIt5BqWldzlwoklTM",
@@ -43,7 +46,7 @@ ReactDOM.render(
             <ReplayLabeler />
           </Route>
           <Route path="/">
-            <App />
+            <HomePage />
           </Route>
         </Switch>
       </BrowserRouter>

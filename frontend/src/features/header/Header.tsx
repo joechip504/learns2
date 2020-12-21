@@ -31,10 +31,10 @@ const Header = (props: Props) => {
         </Navbar.Group>
     )
     return (
-        <Navbar className='bp3-dark'>
+        <Navbar id='learns2header' className='bp3-dark'>
             <Navbar.Group align={Alignment.LEFT}>
                 <Navbar.Heading>
-                    <h1>learns2</h1>
+                    <h1 className='bp3-heading'>learns2</h1>
                 </Navbar.Heading>
             </Navbar.Group>
             <Navbar.Group align={Alignment.RIGHT}>
@@ -42,8 +42,8 @@ const Header = (props: Props) => {
                 <Button className='bp3-minimal' icon='git-repo' text='Source' onClick={onClick} />
                 <Link to='/admin'><Button className='bp3-minimal' icon='cloud-upload' text='Manage'/></Link>
                 <NavbarDivider />
-                <SignInButton />
                 {userHeading}
+                <SignInButton />
                 <SignOutButton />
             </Navbar.Group>
         </Navbar>
