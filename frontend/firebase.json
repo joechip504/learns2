@@ -12,8 +12,8 @@
         "function": "ping"
       },
       {
-        "source": "/replay_info",
-        "function": "replay_info"
+        "source": "/api/analysis",
+        "function": "user_upload_replay"
       },
       {
         "source": "**",

@@ -4,7 +4,8 @@ import { useDropzone } from 'react-dropzone'
 
 enum SubmitState {
     INIT,
-    SUBMITTING
+    SUBMITTING,
+    FAILED
 };
 
 function MyDropzone() {
@@ -19,12 +20,31 @@ function MyDropzone() {
         default:
             break;
     }
+
+    const onResponse = (resp: Response) => {
+        if (resp.status === 202) {
+            resp.json().then(j => console.log(j))
+            setSubmitState(SubmitState.INIT); // TODO redirect
+        }
+        else {
+            console.log(resp)
+            setSubmitState(SubmitState.FAILED); // TODO redirect
+        }
+    }
+
     const onDrop = useCallback(acceptedFiles => {
         setFile(acceptedFiles[0]);
         setSubmitState(SubmitState.SUBMITTING);
-        console.log(acceptedFiles[0]);
-        // Do something with the files
+        let body = new FormData();
+        body.append('replay', acceptedFiles[0]);
+        let params: RequestInit = {
+            method: 'POST',
+            body: body
+        }
+        fetch('/api/analysis', params)
+            .then(resp => onResponse(resp))
     }, [])
+
     const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop })
     const intent = isDragActive ? Intent.SUCCESS : Intent.PRIMARY;
     return (

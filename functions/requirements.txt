@@ -1,4 +1,4 @@
-learns2==0.0.11
+learns2==0.0.16
 google-cloud-storage
 google-cloud-firestore
 python-slugify

@@ -1,4 +1,5 @@
 # https://firebase.google.com/docs/hosting/functions
+# https://github.com/GoogleCloudPlatform/functions-framework-python
 
 import os
 import json
@@ -22,6 +23,32 @@ def replay_info(req: Request):
     parser = SC2ReplayParser(replay)
     payload = parser.to_dict()
     return jsonify(payload)
+
+
+def user_upload_replay(req: Request):
+    # Parse the replay
+    replay = req.files['replay']
+    replay = BytesIO(replay.read())
+    parser = SC2ReplayParser(replay)
+    replay_dict = parser.to_dict()
+
+    # write to firestore
+    # might want to check for duplicates, but can do that later
+    db = firestore.Client()
+    ref: firestore.CollectionReference = db.collection('replaysForAnalysis')
+    update_time, doc = ref.add(replay_dict)
+
+    # TODO call another cloud fn to kick off analysis
+    # TODO this can run in the background
+
+    # http response
+    resp = {
+        'ok': True,
+        'updateTime': update_time.ToDatetime(),
+        'path': doc.path
+    }
+
+    return jsonify(resp), 202
 
 
 # https://cloud.google.com/storage/docs/json_api/v1/objects#resource
@@ -92,6 +119,7 @@ def to_player(payload):
     if uid:
         player['id'] = uid.split('/')[-1]
     return player
+
 
 # https://cloud.google.com/functions/docs/calling/cloud-firestore#functions_firebase_firestore-python
 # https://cloud.google.com/firestore/docs/manage-data/add-data#python_11
