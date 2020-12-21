@@ -44,7 +44,6 @@ def user_upload_replay(req: Request):
     # http response
     resp = {
         'ok': True,
-        'updateTime': update_time.ToDatetime(),
         'path': doc.path
     }
 

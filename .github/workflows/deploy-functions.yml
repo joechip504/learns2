@@ -18,7 +18,7 @@ jobs:
             - run: gcloud info
             #- run: gcloud functions deploy ping --runtime python38 --trigger-http --allow-unauthenticated
             #- run: gcloud functions deploy replay_info --runtime python38 --trigger-http --allow-unauthenticated
-            - run: gcloud functions deploy user_upload_replay --runtime python38 --trigger-http --allow-unauthenticated
+            - run: gcloud functions deploy user_upload_replay --runtime python38 --trigger-http --allow-unauthenticated --max-instances=3
             #- run: gcloud functions deploy parse_tournament_replay --runtime python38
             #- run: gcloud functions deploy unzip_replays --runtime python38 --trigger-resource tournament-dropbox.learns2.joepringle.dev --trigger-event google.storage.object.finalize
             #- run: gcloud functions deploy update_player_cache --runtime python38 --trigger-resource 'projects/learns2/databases/(default)/documents/players/{player}' --trigger-event providers/cloud.firestore/eventTypes/document.write 
