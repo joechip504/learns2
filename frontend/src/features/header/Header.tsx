@@ -24,7 +24,9 @@ const Header = () => {
         <Navbar id='learns2header' className='bp3-dark'>
             <Navbar.Group align={Alignment.LEFT}>
                 <Navbar.Heading>
+                <Link to='/'>
                     <h1 className='bp3-heading'>learns2</h1>
+                </Link>
                 </Navbar.Heading>
             </Navbar.Group>
             <Navbar.Group align={Alignment.RIGHT}>
