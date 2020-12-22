@@ -31,9 +31,8 @@ function MyDropzone() {
     const onDrop = useCallback(acceptedFiles => {
         const onResponse = (resp: Response) => {
             if (resp.status === 202) {
-                setSubmitState(SubmitState.INIT); // TODO redirect
+                setSubmitState(SubmitState.INIT); 
                 resp.json().then(payload => {
-                    console.log(payload);
                     const analysisResponse = payload as AnalysisResponse;
                     const parts = analysisResponse.path.split('/');
                     const docid = parts[parts.length - 1];
@@ -63,7 +62,11 @@ function MyDropzone() {
         gradientClass = 'gradient-thinking';
     }
     const style = `dropzone-container upload-prompt ${gradientClass}`;
-    const intent = isDragActive ? Intent.SUCCESS : Intent.PRIMARY;
+    let intent: Intent = Intent.PRIMARY;
+    if (submitState === SubmitState.FAILED) {
+        intent = Intent.DANGER;
+    }
+    intent = isDragActive ? Intent.SUCCESS : intent;
     return (
         <div>
             <Callout id='uploadCallout' intent={intent} icon='cloud-upload' title={cardTitle} />
