@@ -42,6 +42,7 @@ export interface Replay {
     details: ReplayDetails;
     is_labeled: boolean;
     labels?: any;
+    timestamp?: any;
     storageEvent: StorageEvent;
 };
 

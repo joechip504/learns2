@@ -34,6 +34,12 @@
   margin-top: 10px;
 }
 
+.analysis-profile-grid {
+  display: grid;
+  justify-items: left;
+  grid-template-columns: 1fr 2fr;
+}
+
 .upload-prompt {
   display: flex;
   align-items: center;
