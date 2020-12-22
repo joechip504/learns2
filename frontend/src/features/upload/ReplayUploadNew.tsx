@@ -58,12 +58,17 @@ function MyDropzone() {
     }, [history])
 
     const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop })
+    let gradientClass = 'gradient-primary';
+    if (isDragActive || submitState === SubmitState.SUBMITTING) {
+        gradientClass = 'gradient-thinking';
+    }
+    const style = `dropzone-container upload-prompt ${gradientClass}`;
     const intent = isDragActive ? Intent.SUCCESS : Intent.PRIMARY;
     return (
         <div>
             <Callout id='uploadCallout' intent={intent} icon='cloud-upload' title={cardTitle} />
             <Divider />
-            <div {...getRootProps()} className='dropzone-container upload-prompt'>
+            <div {...getRootProps()} className={style}>
                 <input {...getInputProps()} />
                 <Icon className='upload-prompt-item' icon='cloud-upload' iconSize={64} />
                 <h1 className='bp3-heading upload-prompt-item'>{prompt}</h1>

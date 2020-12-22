@@ -48,7 +48,7 @@ export const TournamentReplayDropbox = () => {
             <Dropzone onDrop={onDrop}>
                 {({ getRootProps, getInputProps }) => (
                     <section>
-                        <div className='dropzone-container' {...getRootProps()}>
+                        <div className='dropzone-container gradient-primary' {...getRootProps()}>
                             <input {...getInputProps()} />
                         </div>
                     </section>
