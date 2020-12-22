@@ -20,6 +20,20 @@
   width: 90%;
 }
 
+.analysis-grid {
+  display: grid;
+  justify-items: center;
+}
+
+.analysis-grid-item {
+  width: 90%;
+  margin-top: 10px;
+}
+
+.analysis-player-card {
+  margin-top: 10px;
+}
+
 .upload-prompt {
   display: flex;
   align-items: center;

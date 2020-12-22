@@ -7,6 +7,7 @@ import AdminView from './features/admin/AdminView';
 import ReplayLabeler from './features/admin/ReplayLabeler';
 import Header from './features/header/Header';
 import HomePage from './features/home/HomePage';
+import ReplayAnalysisPage from './features/analysis/ReplayAnalysisPage';
 
 const App = () => {
   return (
@@ -19,6 +20,9 @@ const App = () => {
           </Route>
           <Route path="/edit/:collection/:replayId">
             <ReplayLabeler />
+          </Route>
+          <Route path="/analysis/:replayId">
+            <ReplayAnalysisPage />
           </Route>
           <Route path="/">
             <HomePage />
