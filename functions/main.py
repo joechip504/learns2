@@ -31,6 +31,7 @@ def user_upload_replay(req: Request):
     replay = BytesIO(replay.read())
     parser = SC2ReplayParser(replay)
     replay_dict = parser.to_dict()
+    replay_dict['timestamp'] = firestore.SERVER_TIMESTAMP
 
     # write to firestore
     # might want to check for duplicates, but can do that later
