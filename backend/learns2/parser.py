@@ -97,13 +97,11 @@ class SC2ReplayParser(object):
         }
 
     def to_dict(self):
-        num_events = len(self.events())
         payload = {
             'isLabeled': False,
             'labels': {},
             'details': self.small_details(),
-            'players': self.players(),
-            'numEvents': num_events
+            'players': self.players()
         }
         return decode_utf8(payload)
 
