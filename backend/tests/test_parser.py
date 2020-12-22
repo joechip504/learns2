@@ -77,3 +77,16 @@ def test_observers():
     assert neeb['m_userInitialData']['m_clanTag'] == 'Ting'
     assert scarlett['m_userInitialData']['m_name'] == 'Scarlett'
     assert scarlett['m_userInitialData']['m_clanTag'] == 'ADEPTd'
+
+
+def test_meta():
+    parser = SC2ReplayParser(withobservers)
+    meta = parser.to_dict()['metadata']
+    from pprint import pprint
+    pprint(meta)
+    assert len(meta['Players']) == 2
+    assert meta['Duration'] == 1322
+    neeb = [p for p in meta['Players'] if p['PlayerID'] == 1][0]
+    scarlett = [p for p in meta['Players'] if p['PlayerID'] == 2][0]
+    assert neeb['Result'] == 'Loss'
+    assert scarlett['Result'] == 'Win'

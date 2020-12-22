@@ -11,6 +11,9 @@ class SC2ReplayParser(object):
         self._initdata = None
         self._details = None
         self._events = None
+        self._attributeevents = None
+        self._trackerevents = None
+        self._metadata = None
 
     @staticmethod
     def read_protocol(archive: MPQArchive):
@@ -48,6 +51,20 @@ class SC2ReplayParser(object):
         game_event_file = archive.read_file('replay.game.events')
         return protocol.decode_replay_game_events(game_event_file)
 
+    @staticmethod
+    def read_attribute_events(protocol, archive: MPQArchive) -> dict:
+        attrib_event_file = archive.read_file('replay.attributes.events')
+        return protocol.decode_replay_attributes_events(attrib_event_file)
+
+    @staticmethod
+    def read_tracker_events(protocol, archive: MPQArchive) -> dict:
+        tracker_event_file = archive.read_file('replay.tracker.events')
+        return protocol.decode_replay_tracker_events(tracker_event_file)
+
+    @staticmethod
+    def read_metadata(protocol, archive: MPQArchive) -> dict:
+        return archive.read_file('replay.gamemetadata.json')
+
     def initdata(self) -> dict:
         if self._initdata is None:
             self._initdata = self.read_initdata(self.protocol, self.archive)
@@ -63,6 +80,22 @@ class SC2ReplayParser(object):
         if self._events is None:
             self._events = list(self.read_game_events(self.protocol, self.archive))
         return self._events
+
+    def attributeevents(self):
+        if self._attributeevents is None:
+            self._attributeevents = list(self.read_attribute_events(self.protocol, self.archive))
+        return self._attributeevents
+
+    def trackerevents(self):
+        if self._trackerevents is None:
+            self._trackerevents = list(self.read_tracker_events(self.protocol, self.archive))
+        return self._trackerevents
+
+    def metadata(self):
+        if self._metadata is None:
+            import json
+            self._metadata = json.loads(self.read_metadata(self.protocol, self.archive))
+        return self._metadata
 
     def players(self) -> List[dict]:
         slots = self.initdata()['m_syncLobbyState']['m_lobbyState']['m_slots']
@@ -101,7 +134,8 @@ class SC2ReplayParser(object):
             'isLabeled': False,
             'labels': {},
             'details': self.small_details(),
-            'players': self.players()
+            'players': self.players(),
+            'metadata': self.metadata()
         }
         return decode_utf8(payload)
 
