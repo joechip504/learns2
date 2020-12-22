@@ -2,6 +2,8 @@ import React, { useCallback, useState } from 'react'
 import { Callout, Card, Divider, Icon, Intent } from "@blueprintjs/core";
 import { useDropzone } from 'react-dropzone'
 import { useHistory } from 'react-router-dom';
+import 'firebase/analytics';
+import * as firebase from 'firebase/app';
 
 enum SubmitState {
     INIT,
@@ -31,6 +33,7 @@ function MyDropzone() {
     const onDrop = useCallback(acceptedFiles => {
         const onResponse = (resp: Response) => {
             if (resp.status === 202) {
+                firebase.analytics().logEvent('replay.submit.succeeded')
                 setSubmitState(SubmitState.INIT); 
                 resp.json().then(payload => {
                     const analysisResponse = payload as AnalysisResponse;
@@ -40,8 +43,9 @@ function MyDropzone() {
                 })
             }
             else {
-                console.log(resp)
-                setSubmitState(SubmitState.FAILED); // TODO redirect
+                console.error(resp);
+                firebase.analytics().logEvent('replay.submit.failed')
+                setSubmitState(SubmitState.FAILED);
             }
         }
         setFile(acceptedFiles[0]);
@@ -52,6 +56,7 @@ function MyDropzone() {
             method: 'POST',
             body: body
         }
+        firebase.analytics().logEvent('replay.submit.started')
         fetch('/api/analysis', params)
             .then(resp => onResponse(resp))
     }, [history])
