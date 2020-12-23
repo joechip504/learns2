@@ -12,6 +12,8 @@ export interface ReplayPlayer {
     m_userInitialData: UserInitialData;
     m_toon: MToon;
     m_localizedId: string;
+    m_teamId: number;
+    m_result: number;
 };
 
 export interface ReplayDetails {
