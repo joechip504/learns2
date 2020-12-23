@@ -50,15 +50,19 @@ const PlayerCard = (player: ReplayPlayer, idx: number) => {
     const url = profileUrl(player.m_localizedId);
     const race = player.m_race;
     const mmr = player.m_userInitialData.m_scaledRating;
-    let stub = ` - ${race}`;
-    if (mmr) {
-        stub += ` (${mmr} MMR)`
-    }
+    const result = player.m_result === 1 ? "WIN" : "LOSS";
+    let stub = race;
+    if (mmr && mmr > 0) {
+        stub = `${mmr} ` + stub;
+    };
     return (
         <Card className='analysis-player-card' key={idx}>
             <h3 className='bp3-heading'>
-                <a href={url} target='_blank' rel="noopener noreferrer">{playerName}</a>{stub}
+                <a href={url} target='_blank' rel="noopener noreferrer">{playerName}</a>
             </h3>
+            <Divider/>
+            <h4 className='bp3-heading'>{stub}</h4>
+            <p>{result}</p>
         </Card>
     )
 }
@@ -81,7 +85,9 @@ const Status = (replay: Replay) => {
 }
 
 const Players = (replay: Replay) => {
-    const cards = replay.players.map((player, idx) => PlayerCard(player, idx));
+    const cards = replay.players
+        .sort((a, b) => a.m_result - b.m_result)
+        .map((player, idx) => PlayerCard(player, idx));
     return (
         <Callout>
             {cards}
