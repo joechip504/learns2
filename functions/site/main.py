@@ -9,6 +9,11 @@ from learns2.parser import SC2ReplayParser
 from flask import Request, jsonify
 from zipfile import ZipFile
 from slugify import slugify
+from uuid import uuid4
+
+
+USER_REPLAY_BUCKET = 'learns2-user-replays'
+USER_REPLAY_COLLECTION = 'replaysForAnalysis'
 
 
 def ping(req: Request):
@@ -28,19 +33,28 @@ def replay_info(req: Request):
 def user_upload_replay(req: Request):
     # Parse the replay
     replay = req.files['replay']
-    replay = BytesIO(replay.read())
-    parser = SC2ReplayParser(replay)
+    buf = BytesIO(replay.read())
+    parser = SC2ReplayParser(buf)
     replay_dict = parser.to_dict()
-    replay_dict['timestamp'] = firestore.SERVER_TIMESTAMP
 
-    # write to firestore
-    # might want to check for duplicates, but can do that later
+    # If the replay is a valid sc2 replay, store it in cloud storage
+    uid = str(uuid4())
+    buf.seek(0)
+    storage_client = storage.Client()
+    bucket = storage_client.get_bucket(USER_REPLAY_BUCKET)
+    blob = bucket.blob(uid)
+    blob.upload_from_file(buf)
+
+    # Add metadata
+    replay_dict['timestamp'] = firestore.SERVER_TIMESTAMP
+    replay_dict['blob'] = blob.path
+
+    # Write to firestore
     db = firestore.Client()
-    ref: firestore.CollectionReference = db.collection('replaysForAnalysis')
+    ref: firestore.CollectionReference = db.collection(USER_REPLAY_COLLECTION)
     update_time, doc = ref.add(replay_dict)
 
-    # TODO call another cloud fn to kick off analysis
-    # TODO this can run in the background
+    # TODO publish pub/sub message with docid, uri in cloud storage
 
     # http response
     resp = {

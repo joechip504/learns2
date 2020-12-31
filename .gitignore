@@ -5,3 +5,4 @@ __pycache__/
 38venv/
 *egg-info
 ml/cache
+*venv*/
