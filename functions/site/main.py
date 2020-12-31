@@ -4,7 +4,7 @@
 import os
 import json
 from io import BytesIO
-from google.cloud import storage, firestore
+from google.cloud import storage, firestore, pubsub_v1
 from learns2.parser import SC2ReplayParser
 from flask import Request, jsonify
 from zipfile import ZipFile
@@ -13,8 +13,8 @@ from uuid import uuid4
 
 
 USER_REPLAY_BUCKET = 'learns2-user-replays'
+USER_REPLAY_ANALYSIS_TOPIC = 'learns2-user-replay-analysis'
 USER_REPLAY_COLLECTION = 'replaysForAnalysis'
-
 
 def ping(req: Request):
     return 'Pong!'
@@ -54,7 +54,16 @@ def user_upload_replay(req: Request):
     ref: firestore.CollectionReference = db.collection(USER_REPLAY_COLLECTION)
     update_time, doc = ref.add(replay_dict)
 
-    # TODO publish pub/sub message with docid, uri in cloud storage
+    # Put this replay in the analysis queue
+    payload = {
+        'gcs_uri': replay_dict['blob_uri'],
+        'firestore_doc_path': doc.path
+    }
+    publisher = pubsub_v1.PublisherClient()
+    topic_name = f'projects/learns2/topics/{USER_REPLAY_ANALYSIS_TOPIC}'
+    encoded_payload = json.dumps(payload).encode('utf-8')
+    fut = publisher.publish(topic_name, encoded_payload)
+    print(fut.result())
 
     # http response
     resp = {
