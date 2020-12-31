@@ -38,16 +38,16 @@ def user_upload_replay(req: Request):
     replay_dict = parser.to_dict()
 
     # If the replay is a valid sc2 replay, store it in cloud storage
-    path = f'{uuid4()}.SC2Replay'
+    blob_name = f'{uuid4()}.SC2Replay'
     buf.seek(0)
     storage_client = storage.Client()
     bucket = storage_client.get_bucket(USER_REPLAY_BUCKET)
-    blob = bucket.blob(path)
+    blob = bucket.blob(blob_name)
     blob.upload_from_file(buf)
 
     # Add metadata
     replay_dict['timestamp'] = firestore.SERVER_TIMESTAMP
-    replay_dict['blob'] = blob.path
+    replay_dict['blob_uri'] = f'gs://{USER_REPLAY_BUCKET}/{blob_name}'
 
     # Write to firestore
     db = firestore.Client()
