@@ -38,11 +38,11 @@ def user_upload_replay(req: Request):
     replay_dict = parser.to_dict()
 
     # If the replay is a valid sc2 replay, store it in cloud storage
-    uid = str(uuid4())
+    path = f'{uuid4()}.SC2Replay'
     buf.seek(0)
     storage_client = storage.Client()
     bucket = storage_client.get_bucket(USER_REPLAY_BUCKET)
-    blob = bucket.blob(uid)
+    blob = bucket.blob(path)
     blob.upload_from_file(buf)
 
     # Add metadata
