@@ -63,7 +63,7 @@ def user_upload_replay(req: Request):
     topic_name = f'projects/learns2/topics/{USER_REPLAY_ANALYSIS_TOPIC}'
     encoded_payload = json.dumps(payload).encode('utf-8')
     fut = publisher.publish(topic_name, encoded_payload)
-    print(fut.result())
+    fut.result()
 
     # http response
     resp = {
