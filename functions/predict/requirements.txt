@@ -1,0 +1,2 @@
+learns2==0.0.20
+tensorflow==2.4.0
