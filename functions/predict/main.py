@@ -103,7 +103,7 @@ def predict(event, context):
             prediction = model.predict(wrapped_feature)[0]
             offset = prediction.argmax(axis=-1)
             guess = PLAYER_LOOKUP[offset]
-            confidence = prediction[offset]
+            confidence = prediction[offset].item()
             print(f'Guess: player={guess}, confidence={confidence * 100}')
             predictions.append({
                 'player_user_id': user_id,
