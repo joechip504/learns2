@@ -4,7 +4,7 @@ import json
 import shutil
 
 import numpy as np
-from google.cloud import storage
+from google.cloud import storage, firestore
 from learns2.featurizer import SC2ReplayFeaturizer
 from learns2.parser import SC2ReplayParser
 from tensorflow import keras
@@ -52,13 +52,18 @@ LOCAL_MODEL_PATH = '/tmp/model'
 
 # Lazily initialized
 storage_client = None
+firestore_client = None
 model = None
 
+
 def predict(event, context):
-    global storage_client, model
+    global firestore_client, storage_client, model
 
     if storage_client is None:
         storage_client = storage.Client()
+
+    if firestore_client is None:
+        firestore_client = firestore.Client()
 
     if model is None:
         print('Initializing model')
@@ -82,20 +87,41 @@ def predict(event, context):
     replay_buf.seek(0)
 
     # Run analysis for each player
+    predictions = []
     for player in players:
         name, user_id = player['m_name'], player['m_userId']
         print(f'Running analysis for player={name}, userId={user_id}')
-        feature = SC2ReplayFeaturizer(
-            replay=replay_buf,
-            user_id=user_id,
-            num_frames=PROTOCOL['knobs']['num_frames'],
-            num_camera_hotspots=PROTOCOL['knobs']['num_camera_hotspots']
-        ).feature()
-        wrapped_feature = np.empty([1] + list(feature.shape))
-        wrapped_feature[0] = feature
-        prediction = model.predict(wrapped_feature)[0]
-        offset = prediction.argmax(axis=-1)
-        guess = PLAYER_LOOKUP[offset]
-        confidence = prediction[offset] * 100
-        print(f'Guess: player={guess}, confidence={confidence}')
-        replay_buf.seek(0)
+        try:
+            feature = SC2ReplayFeaturizer(
+                replay=replay_buf,
+                user_id=user_id,
+                num_frames=PROTOCOL['knobs']['num_frames'],
+                num_camera_hotspots=PROTOCOL['knobs']['num_camera_hotspots']
+            ).feature()
+            wrapped_feature = np.empty([1] + list(feature.shape))
+            wrapped_feature[0] = feature
+            prediction = model.predict(wrapped_feature)[0]
+            offset = prediction.argmax(axis=-1)
+            guess = PLAYER_LOOKUP[offset]
+            confidence = prediction[offset]
+            print(f'Guess: player={guess}, confidence={confidence * 100}')
+            predictions.append({
+                'player_user_id': user_id,
+                'player_doc_id': guess,
+                'confidence': confidence
+            })
+        # Replay might not have enough events
+        except Exception as e:
+            import logging
+            logging.warning(e)
+        finally:
+            replay_buf.seek(0)
+
+    # Finally, write analysis results back to firestore
+    analysis = {
+        'status': 'FINISHED',
+        'timestamp': firestore.SERVER_TIMESTAMP,
+        'predictions': predictions
+    }
+    ref: firestore.DocumentReference = firestore_client.document(firestore_doc_path)
+    ref.set({'analysis': analysis}, merge=True)

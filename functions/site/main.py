@@ -46,8 +46,8 @@ def user_upload_replay(req: Request):
     blob.upload_from_file(buf)
 
     # Add metadata
-    replay_dict['timestamp'] = firestore.SERVER_TIMESTAMP
     replay_dict['blob_uri'] = f'gs://{USER_REPLAY_BUCKET}/{blob_name}'
+    replay_dict['analysis'] = {'status': 'QUEUED', 'timestamp': firestore.SERVER_TIMESTAMP}
 
     # Write to firestore
     db = firestore.Client()
