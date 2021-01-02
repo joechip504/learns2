@@ -5,3 +5,6 @@ export default interface Player {
     aliases?: string[]
 };
 
+export interface AllPlayersCache {
+    objects: Player[];
+}
