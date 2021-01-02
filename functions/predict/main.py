@@ -93,9 +93,9 @@ def predict(event, context):
         ).feature()
         wrapped_feature = np.empty([1] + list(feature.shape))
         wrapped_feature[0] = feature
-        prediction = model.predict(wrapped_feature)
+        prediction = model.predict(wrapped_feature)[0]
         offset = prediction.argmax(axis=-1)
         guess = PLAYER_LOOKUP[offset]
-        confidence = prediction[0][offset] * 100
+        confidence = prediction[offset] * 100
         print(f'Guess: player={guess}, confidence={confidence}')
         replay_buf.seek(0)
