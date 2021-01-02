@@ -62,7 +62,8 @@ def predict(event, context):
 
     if model is None:
         print('Initializing model')
-        storage_client.download_blob_to_file(PROTOCOL['model_uri'], '/tmp/model.zip')
+        with open('/tmp/model.zip', 'wb') as file_obj:
+            storage_client.download_blob_to_file(PROTOCOL['model_uri'], file_obj)
         shutil.unpack_archive('/tmp/model.zip', '/tmp')
         model = keras.models.load_model(LOCAL_MODEL_PATH, compile=True)
 
