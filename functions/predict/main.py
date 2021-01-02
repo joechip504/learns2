@@ -91,7 +91,8 @@ def predict(event, context):
             num_frames=PROTOCOL['knobs']['num_frames'],
             num_camera_hotspots=PROTOCOL['knobs']['num_camera_hotspots']
         ).feature()
-        wrapped_feature = np.empty([1] + feature.shape)
+        wrapped_feature = np.empty([1] + list(feature.shape))
+        wrapped_feature[0] = feature
         prediction = model.predict(wrapped_feature)
         offset = prediction.argmax(axis=-1)
         guess = PLAYER_LOOKUP[offset]
