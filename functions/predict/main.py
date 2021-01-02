@@ -1,13 +1,13 @@
+import base64
 import io
 import json
-import base64
+import shutil
 
-from google.cloud import storage, firestore
 import numpy as np
-from tensorflow import keras
-
+from google.cloud import storage
 from learns2.featurizer import SC2ReplayFeaturizer
 from learns2.parser import SC2ReplayParser
+from tensorflow import keras
 
 # copy/paste this from the training output
 PROTOCOL = {'knobs': {'batch_size': 512,
@@ -18,7 +18,7 @@ PROTOCOL = {'knobs': {'batch_size': 512,
                       'pct_validate': 0.2,
                       'recurrent_dropout': 0.0,
                       'stop_after': 0},
-            'model_uri': 'gs://learns2-models/20210101-153243/model',
+            'model_uri': 'gs://learns2-models/20210101-153243/model.zip',
             'players_one_hot': {'1c03Nd9vyuqfbFiO0I0e': 0,
                                 '5Rcw1RJ9pevKVKIJnKpv': 1,
                                 '5m9c1OqF4UxFn3dXXzzs': 2,
@@ -62,7 +62,8 @@ def predict(event, context):
 
     if model is None:
         print('Initializing model')
-        storage_client.download_blob_to_file(PROTOCOL['model_uri'], LOCAL_MODEL_PATH)
+        storage_client.download_blob_to_file(PROTOCOL['model_uri'], '/tmp/model.zip')
+        shutil.unpack_archive('/tmp/model.zip', '/tmp')
         model = keras.models.load_model(LOCAL_MODEL_PATH, compile=True)
 
     print(context)
