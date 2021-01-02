@@ -22,10 +22,10 @@ const Overview = (replay: Replay) => {
     const ts = details.m_timeUTC / (10 * 1000 * 1000) - 11644473600 //+ (details.m_timeLocalOffset / 10000000)
     const date = new Date(ts * 1000).toString()
     return (
-        <Callout>
+        <Callout icon='application'>
             <h4 className='bp3-heading'>{details.m_title}</h4>
             <Divider />
-            <p>Finished on {date}</p>
+            <p>{date}</p>
         </Callout>
     )
 };
@@ -60,7 +60,7 @@ const PlayerCard = (player: ReplayPlayer, idx: number) => {
             <h3 className='bp3-heading'>
                 <a href={url} target='_blank' rel="noopener noreferrer">{playerName}</a>
             </h3>
-            <Divider/>
+            <Divider />
             <h4 className='bp3-heading'>{stub}</h4>
             <p>{result}</p>
         </Card>
@@ -68,20 +68,22 @@ const PlayerCard = (player: ReplayPlayer, idx: number) => {
 }
 
 const Status = (replay: Replay) => {
-    let analysisState = 'RUNNING';
-    let text = `Status: ${analysisState}`;
-    let timestamp = null;
-    if (replay.timestamp) {
-        const date = new Date(1000 * replay.timestamp.seconds);
-        timestamp = <p className='bp3-ui-text'>Updated: {date.toString()}</p>
+    if (!replay.analysis) return null;
+    else {
+        const analysis = replay.analysis;
+        const text = `Status: ${analysis.status}`;
+        const timestamp = <p className='bp3-ui-text'>{analysis.timestamp.toDate().toString()}</p>
+        const intent = analysis.status === 'FINISHED' ? Intent.SUCCESS : Intent.PRIMARY;
+        //const spinner = <Spinner size={Spinner.SIZE_SMALL}/>;
+        return (
+            <Callout intent={intent} icon='graph' title={text}>
+                {timestamp}
+                <Divider />
+            </Callout>
+        );
+
     }
-    return (
-        <Callout intent={Intent.PRIMARY}>
-            <h4 className='bp3-heading'>{text}</h4>
-            <Divider />
-            {timestamp}
-        </Callout>
-    );
+
 }
 
 const Players = (replay: Replay) => {
@@ -97,8 +99,8 @@ const Players = (replay: Replay) => {
 
 
 const Analysis = (props: AnalysisProps) => {
-    const overview = Overview(props.replay);
     const status = Status(props.replay);
+    const overview = Overview(props.replay);
     const players = Players(props.replay);
     return (
         <div className='bp3-dark analysis-grid'>

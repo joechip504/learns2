@@ -44,8 +44,20 @@ export interface Replay {
     details: ReplayDetails;
     is_labeled: boolean;
     labels?: any;
-    timestamp?: any;
     storageEvent: StorageEvent;
+    analysis?: ReplayAnalysis;
+};
+
+export interface ReplayAnalysis {
+    status: string;
+    timestamp: firebase.firestore.Timestamp;
+    predictions: Prediction[];
+};
+
+export interface Prediction {
+    confidence: number;
+    player_doc_id: string;
+    player_user_id: number;
 };
 
 export interface StorageEvent {
