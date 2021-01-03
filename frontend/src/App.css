@@ -41,6 +41,22 @@
   grid-template-columns: 1fr 2fr;
 }
 
+.player-card-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 20px;
+}
+
+.tr-high-confidence {
+  background-color: #0D8050;
+}
+.tr-med-confidence {
+  background-color: #BF7326;
+}
+.tr-low-confidence {
+  background-color: #FF7373;
+}
+
 .upload-prompt {
   display: flex;
   align-items: center;
