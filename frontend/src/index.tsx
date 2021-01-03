@@ -9,6 +9,7 @@ import 'firebase/analytics'
 import 'firebase/performance'
 import 'firebase/auth'
 import 'firebase/firestore'
+import 'firebase/performance'
 import './App.css';
 import 'normalize.css'
 import '@blueprintjs/core/lib/css/blueprint.css';
@@ -27,6 +28,7 @@ export const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 firebase.analytics();
+firebase.performance();
 
 ReactDOM.render(<App/>, document.getElementById('root'));
 
